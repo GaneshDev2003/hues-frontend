@@ -22,8 +22,36 @@ const UploadPostPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', image);
+    formData.append('upload_preset', 'hdaxh1mb');
+    const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    const cloudinaryData = await cloudinaryResponse.json();
+    const imageUrl = cloudinaryData.url;
+
+    // Prepare data to send to backend
+    const postData = {
+      url: imageUrl,
+      description: content, // Assuming 'content' holds the description
+      emotions: [], // Assuming 'emotions' is an empty array for now
+      answers: [], // Assuming 'answers' is an empty array for now
+    };
+
+    // Send data to your backend endpoint
+    const response = await fetch('http://localhost:8000/api/v1/post/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Token': 'your_access_token', // Include your access token here
+        'Refresh-Token': 'your_refresh_token', // Include your refresh token here
+      },
+      body: JSON.stringify(postData),
+    });
     // Handle form submission (e.g., send data to server)
     console.log('Title:', title);
     console.log('Content:', content);
@@ -89,3 +117,4 @@ const UploadPostPage: React.FC = () => {
 };
 
 export default UploadPostPage;
+
