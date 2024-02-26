@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import AppBar from '@/components/appbar';
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
+const axios = require('axios')
 const LoginPage: React.FC = () => {
 const router = useRouter();
 const {data: session, status} = useSession();
@@ -10,8 +11,10 @@ const getSessionData = ()=>{
   
   if(session){
     console.log(session)
-    fetch("http://localhost:8000/api/v1/signin/" + session.user?.email).then(function response(){
-      console.log(response)
+
+    axios.get("http://localhost:8000/api/v1/signup/" + session.user?.email).then((response:Response)=>{
+      localStorage.setItem("accessToken", response.headers.get("Access-Token")?? "")
+      localStorage.setItem("refreshToken", response.headers.get("Access-Token")?? "")
     })
   }
 }

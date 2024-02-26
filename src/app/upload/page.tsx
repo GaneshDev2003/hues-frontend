@@ -24,9 +24,11 @@ const UploadPostPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
+    const formData:any = new FormData();
     formData.append('file', image);
     formData.append('upload_preset', 'hdaxh1mb');
+
+    console.log(localStorage.getItem("accessToken"), localStorage.getItem("refreshToken"))
     const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload', {
       method: 'POST',
       body: formData,
@@ -41,14 +43,15 @@ const UploadPostPage: React.FC = () => {
       emotions: [], // Assuming 'emotions' is an empty array for now
       answers: [], // Assuming 'answers' is an empty array for now
     };
-
+    const accessToken = localStorage.getItem("accessToken") ?? "_"
+    const refreshToken = localStorage.getItem("refreshToken") ?? "_"
     // Send data to your backend endpoint
     const response = await fetch('http://localhost:8000/api/v1/post/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Access-Token': 'your_access_token', // Include your access token here
-        'Refresh-Token': 'your_refresh_token', // Include your refresh token here
+        'Access-Token': accessToken, // Include your access token here
+        'Refresh-Token': refreshToken, // Include your refresh token here
       },
       body: JSON.stringify(postData),
     });
