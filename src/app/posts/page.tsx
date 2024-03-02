@@ -1,45 +1,94 @@
-'use client'
-import AppBar from '@/components/appbar';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+"use client";
+import AppBar from "@/components/appbar";
+import BottomNavBar from "@/components/bottomnav";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const posts = [
-  { id: 1, author: "John Doe", username: "@user1@1234", content: "Today was a wonderful day" },
-  { id: 2, author: "Jane Smith", username: "@user@1235", content: "Consectetur ipsum dolor amet sit adipisicing eiusmod." },
-  { id: 3, author: "Alice Johnson", username: "@user@1236", content:"Eiusmod sit amet dolor adipisicing ipsum consectetur."},
+  {
+    id: 1,
+    author: "John Doe",
+    username: "@user1@1234",
+    content: "Today was a wonderful day",
+  },
+  {
+    id: 2,
+    author: "Jane Smith",
+    username: "@user@1235",
+    content: "Consectetur ipsum dolor amet sit adipisicing eiusmod.",
+  },
+  {
+    id: 3,
+    author: "Alice Johnson",
+    username: "@user@1236",
+    content: "Eiusmod sit amet dolor adipisicing ipsum consectetur.",
+  },
 ];
 
 const PostsPage = () => {
   const router = useRouter();
-    const {data:session} = useSession();
+  const { data: session } = useSession();
   return (
-    <div >
-    <AppBar title = "Posts"></AppBar>
-    <div className = "bg-blue-100 text-slate-800 container mx-auto px-4 py-16">
-      
-
-      {session && session.user? (<h2 className='text-xl font-semibold mb-4'>Hi {session?.user?.name}</h2>) : <></>}
-      <div className='bg-blue-300 flex flex-col items-center justify-items-center rounded-lg shadow-md p-4 items-center my-4'>
-        <h3 className = "text-xl font-bold my-3">Add your daily post</h3>
-        <button onClick = {()=> router.push('/upload')}className = "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add a new post</button></div>
-      <div className="space-y-4">
-        {posts.map(post => (
-          <div key={post.id} className="bg-white rounded-lg shadow-md p-4">
-            <div className="flex items-start">
-              <div>
-                <p className="text-gray-500">{post.username}</p>
-              </div>
+    <div>
+      <div className="bg-white text-slate-800 container mx-auto px-4 py-16">
+        <div
+          className="bg-cover flex flex-col items-center justify-items-center rounded-lg shadow-md py-10 items-center my-4"
+          style={{ backgroundImage: 'url("images/upload-bg.png")' }}
+        >
+          <h2 className="text-xl font-bold text-white">Hey There!</h2>
+          <h3 className="font-bold text-white">How are you feeling today?</h3>
+          <h3 className="font-bold text-white">
+            Time to be creative about it!
+          </h3>
+          <button
+            onClick={() => router.push("/upload")}
+            className="text-white my-10 bg-primary/40 hover:bg-primary/70 focus:ring-4 focus:ring-primary/40 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+          >
+            Add a new post
+          </button>
+        </div>
+        <h1 className="text-textcolor font-bold my-2 text-2xl">
+          Creativity Catalogue
+        </h1>
+        <div className="grid grid-cols-2 gap-4 flex flex-col align-center">
+          <a href="/categories/music">
+            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+              <img src="images/music.png"></img>
+              <h3 className="text-textcolor font-bold">Music</h3>
             </div>
-            <img src = "https://images.unsplash.com/photo-1496692052106-d37cb66ab80c?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZyZWV8ZW58MHx8MHx8fDA%3D"
-            ></img>
-            <p className="mt-2">{post.content}</p>
-          </div>
-        ))}
+          </a>
+          <a href="/categories/writing">
+            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+              <h3 className="text-textcolor font-bold">Writing</h3>
+              <img src="images/writing.png"></img>
+            </div>
+          </a>
+
+          <a href="/categories/drawing">
+            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+              <img src="images/drawing.png"></img>
+              <h3 className="text-textcolor font-bold">Drawing and Painting</h3>
+            </div>
+          </a>
+
+          <a href="/categories/dancing">
+            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+              <h3 className="text-textcolor font-bold">Dancing</h3>
+              <img src="images/dancing.png"></img>
+            </div>
+          </a>
+
+          <a href="/categories/theatre">
+            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+              <h3 className="text-textcolor font-bold">Theatre</h3>
+              <img src="images/theatre.png"></img>
+            </div>
+          </a>
+        </div>
       </div>
+      <BottomNavBar></BottomNavBar>
     </div>
-    </div>
-    
   );
 };
 
