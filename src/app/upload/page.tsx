@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import AppBar from "@/components/appbar";
+import { Medula_One } from "next/font/google";
 
 const UploadPostPage: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -13,6 +14,17 @@ const UploadPostPage: React.FC = () => {
   const [answer4, setAnswer4] = useState<string>();
 
   const [videoSrc, seVideoSrc] = useState("");
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setImage(file);
+    }
+  };
+
+  const handleContent = (e: any) => {
+    setContent(e.target.value);
+  };
 
   const [emotions, setEmotions] = useState<string>();
   const handleEmotionChange = (e: any) => {
@@ -34,41 +46,32 @@ const UploadPostPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    let answers = [answer1, answer2, answer3, answer4];
+    let answers = [answer1, answer2, answer3];
     e.preventDefault();
-    const formData: any = new FormData();
-    formData.append("file", image);
-    formData.append("upload_preset", "hdaxh1mb");
 
-    const cloudinaryResponse = await fetch(
-      "https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-    const cloudinaryData = await cloudinaryResponse.json();
-    const imageUrl = cloudinaryData.url;
-    setMediaUrl(imageUrl);
     // Prepare data to send to backend
     const postData = {
-      url: imageUrl,
+      url: mediaUrl ?? "",
       description: content, // Assuming 'content' holds the description
       emotions: [emotions], // Assuming 'emotions' is an empty array for now
       answers: answers, // Assuming 'answers' is an empty array for now
     };
     const accessToken = localStorage.getItem("accessToken") ?? "_";
     const refreshToken = localStorage.getItem("refreshToken") ?? "_";
+    44;
+
+    console.log(accessToken);
+    console.log(refreshToken);
     // Send data to your backend endpoint
-    // const response = await fetch("http://localhost:8000/api/v1/post/", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Access-Token": accessToken, // Include your access token here
-    //     "Refresh-Token": refreshToken, // Include your refresh token here
-    //   },
-    //   body: JSON.stringify(postData),
-    // });
+    const response = await fetch("http://43.204.116.40:443/api/v1/post/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Token": accessToken, // Include your access token here
+        "Refresh-Token": refreshToken, // Include your refresh token here
+      },
+      body: JSON.stringify(postData),
+    });
   };
 
   return (
@@ -86,6 +89,7 @@ const UploadPostPage: React.FC = () => {
               <div className="relative w-full lg:max-w-sm">
                 <select
                   onChange={handleEmotionChange}
+                  value={emotions}
                   className="w-full p-2.5 text-primary bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
                 >
                   <option>Happy</option>
@@ -105,7 +109,7 @@ const UploadPostPage: React.FC = () => {
               </label>
               <input
                 id="content"
-                value={content}
+                value={answer1}
                 onChange={handleAnswer1}
                 className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
               ></input>
@@ -119,7 +123,7 @@ const UploadPostPage: React.FC = () => {
               </label>
               <input
                 id="content"
-                value={content}
+                value={answer2}
                 onChange={handleAnswer2}
                 className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
               ></input>
@@ -133,7 +137,7 @@ const UploadPostPage: React.FC = () => {
               </label>
               <input
                 id="content"
-                value={content}
+                value={answer3}
                 onChange={handleAnswer3}
                 className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
               ></input>
@@ -150,7 +154,7 @@ const UploadPostPage: React.FC = () => {
               <input
                 id="content"
                 value={content}
-                onChange={handleAnswer4}
+                onChange={handleContent}
                 className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
               ></input>
             </div>
@@ -167,20 +171,14 @@ const UploadPostPage: React.FC = () => {
               <input
                 type="file"
                 id="image"
+                onChange={handleImageChange}
                 accept="image/*"
                 className="w-full border rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:border-blue-500"
               />
             </div>
-            <button
-              onClick={() => togglePreview(!preview)}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Upload
-            </button>
-          </form>
-          <div>
-            {mediaUrl && (
-              <div>
+            {mediaUrl ? (
+              <div className="container mx-auto">
+                <h3 className="text-lg text-primary my-3">Preview</h3>
                 {mediaUrl.endsWith(".mp4") ? ( // Example condition for video
                   <video controls>
                     <source src={mediaUrl} type="video/mp4" />
@@ -189,8 +187,35 @@ const UploadPostPage: React.FC = () => {
                   <img src={mediaUrl} alt="Uploaded media" /> // Example for image
                 )}
               </div>
+            ) : (
+              <button
+                onClick={async () => {
+                  const formData: any = new FormData();
+                  formData.append("file", image);
+                  formData.append("upload_preset", "hdaxh1mb");
+                  const cloudinaryResponse = await fetch(
+                    "https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload",
+                    {
+                      method: "POST",
+                      body: formData,
+                    }
+                  );
+                  const cloudinaryData = await cloudinaryResponse.json();
+                  const imageUrl = cloudinaryData.url;
+                  setMediaUrl(imageUrl);
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Upload
+              </button>
             )}
-          </div>
+            <button
+              className="w-full mx-auto my-5 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </>
