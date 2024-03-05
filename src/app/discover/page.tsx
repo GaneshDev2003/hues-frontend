@@ -1,6 +1,7 @@
 "use client";
 import BottomNavBar from "@/components/bottomnav";
 import { Media } from "@/components/media";
+import { setRef } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 type User = {
   email: string;
@@ -43,8 +44,13 @@ const getTimeAgo = (timestamp: string): string => {
   }
 };
 export default function Discover() {
-  const accessToken = localStorage.getItem("accessToken") ?? "";
-  const refreshToken = localStorage.getItem("refreshToken") ?? "";
+  const [accessToken, setAccessToken] = useState<string | null>();
+  const [refreshToken, setRefreshToken] = useState<string | null>();
+
+  useEffect(() => {
+    setAccessToken(localStorage.getItem("accessToken"));
+    setRefreshToken(localStorage.getItem("refreshToken"));
+  });
   const [postData, setPostData] = useState<any>([]);
   let posts: any[] = [];
   const getPostData = async () => {};
@@ -52,8 +58,8 @@ export default function Discover() {
     fetch("http://43.204.116.40:443/api/v1/feed/latest", {
       headers: {
         "Content-Type": "application/json",
-        "Access-Token": accessToken,
-        "Refresh-Token": refreshToken,
+        "Access-Token": accessToken ?? "",
+        "Refresh-Token": refreshToken ?? "",
       },
     })
       .then((response) => response.json())

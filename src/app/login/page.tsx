@@ -18,11 +18,11 @@ export default function LoginPage() {
   };
 
   const getSessionData = async () => {
-    if (session) {
+    if (session && session.user) {
       console.log(session);
 
       let response = await fetch(
-        "http://43.204.116.40:443/api/v1/signup/pranavp1483@gmail.com"
+        "http://43.204.116.40:443/api/v1/signup/" + session.user?.email
       );
 
       localStorage.setItem(
@@ -31,7 +31,7 @@ export default function LoginPage() {
       );
       localStorage.setItem(
         "refreshToken",
-        response.headers.get("Access-Token") ?? ""
+        response.headers.get("Refresh-Token") ?? ""
       );
       router.push("/home");
     }
