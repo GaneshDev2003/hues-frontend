@@ -11,7 +11,8 @@ const config: Config = {
       colors: {
         primary: "#57D4C7",
         textcolor: "#12C1B4",
-        secondary: "#FFC107" // Your custom primary color
+        secondary: "#FFC107",
+        textsecondary: "#B3B3B3" // Your custom primary color
       },
       backgroundImage: {
         'rectangle' : "url('/images/rectangle1.png')"

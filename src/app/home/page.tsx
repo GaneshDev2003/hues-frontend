@@ -65,7 +65,7 @@ const PostsPage = () => {
             </div>
           </a>
 
-          <a href="/categories/drawing">
+          <a href="/categories/art">
             <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
               <img src="images/drawing.png"></img>
               <h3 className="text-textcolor font-bold">Drawing and Painting</h3>

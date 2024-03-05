@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import AppBar from "@/components/appbar";
 import { Medula_One } from "next/font/google";
+import BottomNavBar from "@/components/bottomnav";
 
 const UploadPostPage: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -15,6 +16,13 @@ const UploadPostPage: React.FC = () => {
 
   const [videoSrc, seVideoSrc] = useState("");
 
+  const refreshPage = () => {
+    setContent("");
+    setImage(null);
+    setAnswer1("");
+    setAnswer2("");
+    setAnswer3("");
+  };
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
@@ -63,7 +71,7 @@ const UploadPostPage: React.FC = () => {
     console.log(accessToken);
     console.log(refreshToken);
     // Send data to your backend endpoint
-    const response = await fetch("http://43.204.116.40:443/api/v1/post/", {
+    fetch("http://43.204.116.40:443/api/v1/post/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,13 +79,20 @@ const UploadPostPage: React.FC = () => {
         "Refresh-Token": refreshToken, // Include your refresh token here
       },
       body: JSON.stringify(postData),
-    });
+    })
+      .then((response) => {
+        alert("Your post was successfully uploaded :)");
+        refreshPage();
+      })
+      .catch((response) => {
+        alert("Upload post failed!");
+      });
   };
 
   return (
     <>
       <div>
-        <div className="container mx-auto px-4 py-16 h-screen">
+        <div className="container mx-auto px-4 py-16">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
@@ -204,17 +219,18 @@ const UploadPostPage: React.FC = () => {
                   const imageUrl = cloudinaryData.url;
                   setMediaUrl(imageUrl);
                 }}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
                 Upload
               </button>
             )}
             <button
-              className="w-full mx-auto my-5 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full mx-auto mt-3 mb-15 bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Submit
             </button>
+            <BottomNavBar></BottomNavBar>
           </form>
         </div>
       </div>

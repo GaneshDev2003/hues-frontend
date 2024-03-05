@@ -7,23 +7,33 @@ const axios = require("axios");
 export default function LoginPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const getSessionData = () => {
+  const userData = () => {
+    fetch("http://43.204.116.40:443/api/v1/signup/pranavp1483@gmail.com")
+      .then((response) => {
+        response.headers.forEach(console.log);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const getSessionData = async () => {
     if (session) {
       console.log(session);
 
-      axios
-        .get("http://43.204.116.40:443/api/v1/signup/" + session.user?.email)
-        .then((response: Response) => {
-          localStorage.setItem(
-            "accessToken",
-            response.headers.get("Access-Token") ?? ""
-          );
-          localStorage.setItem(
-            "refreshToken",
-            response.headers.get("Access-Token") ?? ""
-          );
-          router.push("/posts");
-        });
+      let response = await fetch(
+        "http://43.204.116.40:443/api/v1/signup/pranavp1483@gmail.com"
+      );
+
+      localStorage.setItem(
+        "accessToken",
+        response.headers.get("Access-Token") ?? ""
+      );
+      localStorage.setItem(
+        "refreshToken",
+        response.headers.get("Access-Token") ?? ""
+      );
+      router.push("/home");
     }
   };
   useEffect(() => {

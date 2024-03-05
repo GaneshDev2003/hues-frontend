@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import PostsPage from "./posts/page";
+import PostsPage from "./home/page";
 import LoginPage from "./login/page";
 type tokensType = {
   accessToken: string | null;

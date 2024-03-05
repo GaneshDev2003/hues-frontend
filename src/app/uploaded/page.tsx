@@ -49,7 +49,7 @@ export default function Discover() {
   let posts: any[] = [];
   const getPostData = async () => {};
   useEffect(() => {
-    fetch("http://43.204.116.40:443/api/v1/feed/latest", {
+    fetch("http://43.204.116.40:443/api/v1/user/post", {
       headers: {
         "Content-Type": "application/json",
         "Access-Token": accessToken,
@@ -78,7 +78,7 @@ export default function Discover() {
   return (
     <div>
       <div className="bg-white text-slate-800 container mx-auto px-4 py-16">
-        <h2 className="text-3xl mb-8 font-bold text-primary">Discover</h2>
+        <h2 className="text-3xl mb-8 font-bold text-primary">Your Posts</h2>
         <div className="flex flex-wrap">
           {postData.map((post: Post, index: number) => (
             <div
@@ -99,11 +99,3 @@ export default function Discover() {
     </div>
   );
 }
-
-// export default function Page() {
-//   return (
-//     <Suspense fallback={<div>Loading....</div>}>
-//       <Discover></Discover>
-//     </Suspense>
-//   );
-// }
