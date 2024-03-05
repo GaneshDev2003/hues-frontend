@@ -15,7 +15,7 @@ export default function Art() {
 
                     <div className = "bg-cover bg-no-repeat py-5 px-3 overflow-hidden text-center"  style={{backgroundImage: 'url("/images/rectangle.svg")'}}>
                         <h2 className = "font-semibold text-lg">Monologue</h2>
-                        <p className='text-sm'>Take centre stage, delve into the depths of a character's soul. Explore their inner world, voice their thoughts, </p>
+                        <p className='text-sm'>Take centre stage, delve into the depths of a character&apos;s soul. Explore their inner world, voice their thoughts, </p>
                     </div>
 
                     <div className = "bg-cover bg-no-repeat p-5 overflow-hidden text-center"  style={{backgroundImage: 'url("/images/rectangle-alt.png")'}}>
