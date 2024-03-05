@@ -15,7 +15,7 @@ export default function Art() {
 
                     <div className = "bg-cover max-w-screen bg-no-repeat py-5 px-1 text-wrap overflow-hidden text-center"  style={{backgroundImage: 'url("/images/rectangle.svg")'}}>
                         <h2 className = "font-semibold text-lg">Free Dance</h2>
-                        <p className = "text-sm">Forget the steps, just move! Let your body express itself however it feels, there's no right or wrong way</p>
+                        <p className = "text-sm">Forget the steps, just move! Let your body express itself however it feels, there&apos;s no right or wrong way</p>
                     </div>
 
                     <div className = "bg-cover bg-no-repeat p-4 overflow-hidden text-center"  style={{backgroundImage: 'url("/images/rectangle-alt.png")'}}>
