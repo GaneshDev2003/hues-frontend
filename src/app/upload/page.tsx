@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import AppBar from "@/components/appbar";
 import { Medula_One } from "next/font/google";
 import BottomNavBar from "@/components/bottomnav";
+import { BASE_URL } from "@/utils/api";
 
 const UploadPostPage: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -71,22 +72,23 @@ const UploadPostPage: React.FC = () => {
     console.log(accessToken);
     console.log(refreshToken);
     // Send data to your backend endpoint
-    fetch("http://43.204.116.40:443/api/v1/post/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Token": accessToken, // Include your access token here
-        "Refresh-Token": refreshToken, // Include your refresh token here
-      },
-      body: JSON.stringify(postData),
-    })
-      .then((response) => {
-        alert("Your post was successfully uploaded :)");
-        refreshPage();
+    if (mediaUrl)
+      fetch(BASE_URL + "/post/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Token": accessToken, // Include your access token here
+          "Refresh-Token": refreshToken, // Include your refresh token here
+        },
+        body: JSON.stringify(postData),
       })
-      .catch((response) => {
-        alert("Upload post failed!");
-      });
+        .then((response) => {
+          alert("Your post was successfully uploaded :)");
+          refreshPage();
+        })
+        .catch((response) => {
+          alert("Upload post failed!");
+        });
   };
 
   return (
@@ -187,7 +189,7 @@ const UploadPostPage: React.FC = () => {
                 type="file"
                 id="image"
                 onChange={handleImageChange}
-                accept="image/*"
+                accept="image/*,video/*"
                 className="w-full border rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:border-blue-500"
               />
             </div>
@@ -225,7 +227,7 @@ const UploadPostPage: React.FC = () => {
               </button>
             )}
             <button
-              className="w-full mx-auto mt-3 mb-15 bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full mx-auto mt-3 mb-10 bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Submit

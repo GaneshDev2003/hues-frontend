@@ -1,6 +1,7 @@
 "use client";
 import BottomNavBar from "@/components/bottomnav";
 import { Media } from "@/components/media";
+import { BASE_URL } from "@/utils/api";
 import React, { Suspense, useEffect, useState } from "react";
 type User = {
   email: string;
@@ -54,7 +55,7 @@ export default function Discover() {
   let posts: any[] = [];
   const getPostData = async () => {};
   useEffect(() => {
-    fetch("http://43.204.116.40:443/api/v1/user/post", {
+    fetch(BASE_URL + "/user/post", {
       headers: {
         "Content-Type": "application/json",
         "Access-Token": accessToken ?? "",

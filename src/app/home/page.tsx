@@ -5,27 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const posts = [
-  {
-    id: 1,
-    author: "John Doe",
-    username: "@user1@1234",
-    content: "Today was a wonderful day",
-  },
-  {
-    id: 2,
-    author: "Jane Smith",
-    username: "@user@1235",
-    content: "Consectetur ipsum dolor amet sit adipisicing eiusmod.",
-  },
-  {
-    id: 3,
-    author: "Alice Johnson",
-    username: "@user@1236",
-    content: "Eiusmod sit amet dolor adipisicing ipsum consectetur.",
-  },
-];
-
 const PostsPage = () => {
   const router = useRouter();
   const { data: session } = useSession();

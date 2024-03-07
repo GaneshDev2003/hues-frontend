@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import AppBar from "@/components/appbar";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Button, Divider } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -9,10 +9,11 @@ import BottomNavBar from "@/components/bottomnav";
 
 const ProfilePage = () => {
   const router = useRouter();
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    router.push("/");
+    await signOut();
+    window.location.href = "/login";
   };
   const { data: session } = useSession();
   return (

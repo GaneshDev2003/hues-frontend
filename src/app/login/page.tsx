@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import AppBar from "@/components/appbar";
 import { getSession, signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/utils/api";
 const axios = require("axios");
 export default function LoginPage() {
   const router = useRouter();
@@ -21,9 +22,7 @@ export default function LoginPage() {
     if (session && session.user) {
       console.log(session);
 
-      let response = await fetch(
-        "http://43.204.116.40:443/api/v1/signup/" + session.user?.email
-      );
+      let response = await fetch(BASE_URL + "/signup/" + session.user?.email);
 
       localStorage.setItem(
         "accessToken",
