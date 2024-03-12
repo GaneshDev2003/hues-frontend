@@ -1,0 +1,1 @@
+export const BASE_URL:string = "http://13.201.12.17:443/api"
