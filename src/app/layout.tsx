@@ -53,6 +53,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <header>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+      </header>
       <body className={inter.className}>
         <div>{children}</div>
       </body>
