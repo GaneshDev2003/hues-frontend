@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import Providers from "@/components/provider";
 import Appbar from "@/components/appbar";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-
+    // startUpImage: [],
   },
   formatDetection: {
     telephone: false,
@@ -53,11 +55,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <header>
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
-      </header>
       <body className={inter.className}>
-        <div>{children}</div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
