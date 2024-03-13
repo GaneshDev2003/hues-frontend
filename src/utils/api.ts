@@ -1,1 +1,1 @@
-export const BASE_URL:string = "http://13.201.12.17:443/api"
+export const BASE_URL:string = "https://huesofchennai.azurewebsites.net/api"

@@ -1,12 +1,14 @@
-"use client";
-import React, { useState } from "react";
-import BottomNavBar from "@/components/bottomnav";
-import { BASE_URL } from "@/utils/api";
-import Cookies from "js-cookie";
+'use client';
+import React, { useState } from 'react';
+import BottomNavBar from '@/components/bottomnav';
+import { BASE_URL } from '@/utils/api';
+import Cookies from 'js-cookie';
+import MyAppBar from '@/components/appbar';
+import { useRouter } from 'next/navigation';
 
 const UploadPostPage: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [mediaUrl, setMediaUrl] = useState<string | null>();
   const [answer1, setAnswer1] = useState<string>();
@@ -14,22 +16,22 @@ const UploadPostPage: React.FC = () => {
   const [answer3, setAnswer3] = useState<string>();
   const [answer4, setAnswer4] = useState<string>();
 
-  const [videoSrc, seVideoSrc] = useState("");
-  const accessToken = Cookies.get("huesAccessToken");
-  const refreshToken = Cookies.get("huesRefreshToken");
+  const [videoSrc, seVideoSrc] = useState('');
+  const accessToken = Cookies.get('huesAccessToken');
+  const refreshToken = Cookies.get('huesRefreshToken');
 
   const handleLogout = async () => {
-    Cookies.remove("huesAccessToken");
-    Cookies.remove("huesRefreshToken");
-    window.location.href = "/login";
+    Cookies.remove('huesAccessToken');
+    Cookies.remove('huesRefreshToken');
+    window.location.href = '/login';
   };
 
   const refreshPage = () => {
-    setContent("");
+    setContent('');
     setImage(null);
-    setAnswer1("");
-    setAnswer2("");
-    setAnswer3("");
+    setAnswer1('');
+    setAnswer2('');
+    setAnswer3('');
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +45,7 @@ const UploadPostPage: React.FC = () => {
     setContent(e.target.value);
   };
 
-  const [emotions, setEmotions] = useState<string>("Happy");
+  const [emotions, setEmotions] = useState<string>('Happy');
   const handleEmotionChange = (e: any) => {
     setEmotions(e.target.value);
   };
@@ -67,77 +69,80 @@ const UploadPostPage: React.FC = () => {
     e.preventDefault();
 
     const postData = {
-      url: mediaUrl ?? "",
+      url: mediaUrl ?? '',
       description: content,
       emotions: [emotions],
       answers: answers,
     };
 
     if (mediaUrl)
-      fetch(BASE_URL + "/v1/post", {
-        method: "POST",
+      fetch(BASE_URL + '/v1/post', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + accessToken,
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + accessToken,
         },
         body: JSON.stringify(postData),
       })
         .then((response) => {
           if (response.status == 201) {
-          alert("Your post was successfully uploaded :)");
-          refreshPage();
-          }
-          else if (response.status == 401) {
-            fetch(BASE_URL + "/v1/refresh", {
+            alert('Your post was successfully uploaded :)');
+            refreshPage();
+          } else if (response.status == 401) {
+            fetch(BASE_URL + '/v1/refresh', {
               method: 'POST',
               headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json',
               },
-              body: JSON.stringify({refresh: refreshToken})
+              body: JSON.stringify({ refresh: refreshToken }),
             })
-            .then((response) => {
-              if (response.status == 200) {
-                return response.json()
-              } else {
-                handleLogout()
-              }
-            })
-            .then((tokenData) => {
-              Cookies.set("huesAccessToken", tokenData.access);
-              fetch(BASE_URL + "/v1/post", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer " + tokenData.access
-                },
-                body: JSON.stringify(postData),
-              })
               .then((response) => {
-                if (response.status == 201) {
-                  alert("Your post was successfully uploaded :)");
-                  refreshPage();
+                if (response.status == 200) {
+                  return response.json();
                 } else {
                   handleLogout();
                 }
               })
+              .then((tokenData) => {
+                Cookies.set('huesAccessToken', tokenData.access);
+                fetch(BASE_URL + '/v1/post', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + tokenData.access,
+                  },
+                  body: JSON.stringify(postData),
+                })
+                  .then((response) => {
+                    if (response.status == 201) {
+                      alert('Your post was successfully uploaded :)');
+                      refreshPage();
+                    } else {
+                      handleLogout();
+                    }
+                  })
+                  .catch((response) => {
+                    handleLogout();
+                  });
+              })
               .catch((response) => {
                 handleLogout();
-              })
-            })
-            .catch((response) => {
-              handleLogout()
-            })
+              });
           }
         })
         .catch((response) => {
-          alert("Upload post failed!");
+          alert('Upload post failed!');
         });
   };
-
+  const router = useRouter();
   return (
     <>
       <div>
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-8 mb-8">
+          <MyAppBar
+            title="Upload"
+            onBackButtonClick={() => router.back()}
+          ></MyAppBar>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
@@ -220,10 +225,7 @@ const UploadPostPage: React.FC = () => {
             </div>
 
             <div className="mb-4">
-              <label
-                htmlFor="image"
-                className="block text-primary font-bold mb-2"
-              >
+              <label htmlFor="image" className="block text-primary mb-2">
                 Based on the above answers & anything else you wish to express,
                 upload a creative piece. Video, text, image and audio are
                 supported.
@@ -239,7 +241,7 @@ const UploadPostPage: React.FC = () => {
             {mediaUrl ? (
               <div className="container mx-auto">
                 <h3 className="text-lg text-primary my-3">Preview</h3>
-                {mediaUrl.endsWith(".mp4") ? (
+                {mediaUrl.endsWith('.mp4') ? (
                   <video controls>
                     <source src={mediaUrl} type="video/mp4" />
                   </video>
@@ -251,14 +253,14 @@ const UploadPostPage: React.FC = () => {
               <button
                 onClick={async () => {
                   const formData: any = new FormData();
-                  formData.append("file", image);
-                  formData.append("upload_preset", "hdaxh1mb");
+                  formData.append('file', image);
+                  formData.append('upload_preset', 'hdaxh1mb');
                   const cloudinaryResponse = await fetch(
-                    "https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload",
+                    'https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload',
                     {
-                      method: "POST",
+                      method: 'POST',
                       body: formData,
-                    }
+                    },
                   );
                   const cloudinaryData = await cloudinaryResponse.json();
                   const imageUrl = cloudinaryData.url;
