@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { getSession, signIn, useSession } from "next-auth/react";
 import { BASE_URL } from "@/utils/api";
-import '@/utils/api'; // Importing the axios interceptors from the appropriate file
 import Cookies from "js-cookie";
 import axios from "axios";
 

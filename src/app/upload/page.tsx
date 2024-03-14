@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import BottomNavBar from "@/components/bottomnav";
 import { BASE_URL } from "@/utils/api";
-import '@/utils/api';
 import axios from "axios";
 import Cookies from "js-cookie";
 

@@ -5,7 +5,6 @@ import { BASE_URL } from "@/utils/api";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import '@/utils/api';
 
 type Post = {
   answers: string[];
