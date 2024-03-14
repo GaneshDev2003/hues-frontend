@@ -5,6 +5,7 @@ import { Divider } from "@mui/material";
 import { useRouter } from "next/navigation";
 import BottomNavBar from "@/components/bottomnav";
 import Cookies from "js-cookie";
+import { signOut } from "next-auth/react";
 
 const ProfilePage = () => {
 
@@ -13,6 +14,7 @@ const ProfilePage = () => {
   const refreshToken = Cookies.get("huesRefreshToken");
 
   const handleLogout = async () => {
+    await signOut();
     Cookies.remove("huesAccessToken");
     Cookies.remove("huesRefreshToken");
     window.location.href = "/login";

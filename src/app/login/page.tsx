@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { getSession, signIn, useSession } from "next-auth/react";
 import { BASE_URL } from "@/utils/api";
 import Cookies from "js-cookie";
