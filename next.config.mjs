@@ -5,6 +5,7 @@ const nextConfig = {
 import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
+  customWorkerSrc: "service-worker",
   dest: "public",
 });
 
