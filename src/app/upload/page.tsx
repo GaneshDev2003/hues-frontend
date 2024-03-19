@@ -1,10 +1,12 @@
-'use client';
-import React, { useState } from 'react';
-import BottomNavBar from '@/components/bottomnav';
-import { BASE_URL } from '@/utils/api';
-import Cookies from 'js-cookie';
+"use client";
+import React, { useState } from "react";
+import BottomNavBar from "@/components/bottomnav";
+import { BASE_URL } from "@/utils/api";
+import axios from "axios";
+import Cookies from "js-cookie";
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
+
 
 const UploadPostPage: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -65,9 +67,8 @@ const UploadPostPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    let answers = [answer1, answer2, answer3];
     e.preventDefault();
-
+    let answers = [answer1, answer2, answer3];
     const postData = {
       url: mediaUrl ?? '',
       description: content,
@@ -75,64 +76,55 @@ const UploadPostPage: React.FC = () => {
       answers: answers,
     };
 
-    if (mediaUrl)
-      fetch(BASE_URL + '/v1/post', {
-        method: 'POST',
+    try {
+      const response = await axios.post(`${BASE_URL}/v1/post`, postData, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + accessToken,
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(postData),
-      })
-        .then((response) => {
-          if (response.status == 201) {
-            alert('Your post was successfully uploaded :)');
-            refreshPage();
-          } else if (response.status == 401) {
-            fetch(BASE_URL + '/v1/refresh', {
-              method: 'POST',
+      });
+  
+      if (response.status === 201) {
+        alert("Your post was successfully uploaded :)");
+        refreshPage();
+      }
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        try {
+          const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, {
+            refresh: refreshToken
+          }, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+  
+          if (refreshResponse.status === 200) {
+            Cookies.set("huesAccessToken", refreshResponse.data.access);
+            const newResponse = await axios.post(`${BASE_URL}/v1/post`, postData, {
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshResponse.data.access}`,
               },
-              body: JSON.stringify({ refresh: refreshToken }),
-            })
-              .then((response) => {
-                if (response.status == 200) {
-                  return response.json();
-                } else {
-                  handleLogout();
-                }
-              })
-              .then((tokenData) => {
-                Cookies.set('huesAccessToken', tokenData.access);
-                fetch(BASE_URL + '/v1/post', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + tokenData.access,
-                  },
-                  body: JSON.stringify(postData),
-                })
-                  .then((response) => {
-                    if (response.status == 201) {
-                      alert('Your post was successfully uploaded :)');
-                      refreshPage();
-                    } else {
-                      handleLogout();
-                    }
-                  })
-                  .catch((response) => {
-                    handleLogout();
-                  });
-              })
-              .catch((response) => {
-                handleLogout();
-              });
+            });
+  
+            if (newResponse.status === 201) {
+              alert("Your post was successfully uploaded :)");
+              refreshPage();
+            } else {
+              handleLogout();
+            }
+          } else {
+            handleLogout();
           }
-        })
-        .catch((response) => {
-          alert('Upload post failed!');
-        });
+        } catch (error) {
+          handleLogout();
+        }
+      } else {
+        alert("Upload post failed!");
+      }
+    }
+
   };
   const router = useRouter();
   return (

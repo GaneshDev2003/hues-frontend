@@ -1,13 +1,16 @@
-'use client';
-import BottomNavBar from '@/components/bottomnav';
-import { Media } from '@/components/media';
-import { BASE_URL } from '@/utils/api';
-import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
+"use client";
+import BottomNavBar from "@/components/bottomnav";
+import { Media } from "@/components/media";
+import { BASE_URL } from "@/utils/api";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
 import { handleLogout } from '@/utils/logout';
 import { AppBar } from '@mui/material';
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
+
+
 type Post = {
   answers: string[];
   description: string;
@@ -47,63 +50,51 @@ export default function Discover() {
   const refreshToken = Cookies.get('huesRefreshToken');
 
   useEffect(() => {
-    // TODO: change fetch functions to axios after implementing axios interceptor
-    console.log('streak', Cookies.get('streak'));
-    fetch(BASE_URL + '/v1/post', {
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-      },
-    })
-      .then((response) => {
-        if (response.status == 200) {
-          return response.json();
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/v1/post`, {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
+  
+        if (response.status === 200) {
+          setPostData(response.data.posts);
         } else {
-          fetch(BASE_URL + '/v1/refresh', {
-            method: 'POST',
+          const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, {
+            refresh: refreshToken
+          }, {
             headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ refresh: refreshToken }),
-          })
-            .then((response) => {
-              if (response.status == 200) {
-                return response.json();
-              } else {
-                handleLogout();
-              }
-            })
-            .then((tokenData) => {
-              Cookies.set('huesAccessToken', tokenData.access);
-              fetch(BASE_URL + '/v1/post', {
-                headers: {
-                  Authorization: 'Bearer ' + tokenData.access,
-                },
-              })
-                .then((response) => {
-                  if (response.status == 200) {
-                    return response.json();
-                  } else {
-                    handleLogout();
-                  }
-                })
-                .then((data) => {
-                  setPostData(data.posts);
-                })
-                .catch((response) => {
-                  handleLogout();
-                });
-            })
-            .catch((response) => {
-              handleLogout();
+              "Content-Type": "application/json"
+            }
+          });
+  
+          if (refreshResponse.status === 200) {
+            Cookies.set("huesAccessToken", refreshResponse.data.access);
+            const newResponse = await axios.get(`${BASE_URL}/v1/post`, {
+              headers: {
+                "Authorization": `Bearer ${refreshResponse.data.access}`,
+              },
             });
+  
+            if (newResponse.status === 200) {
+              setPostData(newResponse.data.posts);
+            } else {
+              handleLogout();
+            }
+          } else {
+            handleLogout();
+          }
         }
-      })
-      .then((data) => {
-        if (data) setPostData(data.posts);
-      })
-      .catch((response) => {
-        alert('Error Fetching Posts :(');
-      });
+      } catch (error) {
+        handleLogout();
+        console.error("Error fetching posts:", error);
+      }
+    };
+  
+    fetchData();
+
   }, []);
 
   return (

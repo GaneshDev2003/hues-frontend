@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import PostsPage from "./home/page";
 import LoginPage from "./login/page";
+import '@/utils/api';
 
 type tokensType = {
   accessToken: string | undefined;
