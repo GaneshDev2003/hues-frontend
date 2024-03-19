@@ -6,25 +6,27 @@ import { useRouter } from "next/navigation";
 import BottomNavBar from "@/components/bottomnav";
 import Cookies from "js-cookie";
 import { signOut } from "next-auth/react";
+import { FormInput } from 'lucide-react';
 
 const ProfilePage = () => {
-
   const router = useRouter();
-  const accessToken = Cookies.get("huesAccessToken");
-  const refreshToken = Cookies.get("huesRefreshToken");
+  const accessToken = Cookies.get('huesAccessToken');
+  const refreshToken = Cookies.get('huesRefreshToken');
 
   const handleLogout = async () => {
+
     await signOut();
     Cookies.remove("huesAccessToken");
     Cookies.remove("huesRefreshToken");
     window.location.href = "/login";
+
   };
 
   useEffect(() => {
     if (!accessToken || !refreshToken) {
-      window.location.href = "/login";
+      window.location.href = '/login';
     }
-  })
+  });
 
   return (
     <div>
@@ -46,7 +48,18 @@ const ProfilePage = () => {
                   height={20}
                   className="inline"
                 ></Image>
-                <h3 className="inline font-semibold text-xl mx-3">Posts</h3>
+                <h3 className="inline font-semibold text-xl mx-3">
+                  Your Posts
+                </h3>
+              </div>
+            </a>
+            <Divider></Divider>
+            <a href="/feedback">
+              <div className="my-2">
+                <FormInput className="inline"></FormInput>
+                <h3 className="inline font-semibold text-xl mx-3">
+                  Give Feedback
+                </h3>
               </div>
             </a>
             <Divider></Divider>
