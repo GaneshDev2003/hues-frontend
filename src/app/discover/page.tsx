@@ -44,6 +44,7 @@ const getTimeAgo = (timestamp: string): string => {
 };
 
 export default function Discover() {
+  const router = useRouter();
   const [postData, setPostData] = useState<any>([]);
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
