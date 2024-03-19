@@ -1,22 +1,32 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import PostsPage from "./home/page";
 import LoginPage from "./login/page";
+import '@/utils/api';
+
 type tokensType = {
-  accessToken: string | null;
-  refreshToken: string | null;
+  accessToken: string | undefined;
+  refreshToken: string | undefined;
 };
+
 export default function Home() {
-  const router = useRouter();
+
   const [tokens, setTokens] = useState<tokensType | null>();
+  
   useEffect(() => {
-    setTokens({
-      accessToken: localStorage.getItem("accessToken"),
-      refreshToken: localStorage.getItem("refreshToken"),
-    });
+    const accessToken = Cookies.get("huesAccessToken");
+    const refreshToken = Cookies.get("huesRefreshToken");
+    setTokens(
+      {
+        accessToken: accessToken,
+        refreshToken: refreshToken
+      }
+    )
   }, []);
+
   if (tokens && tokens.accessToken && tokens.refreshToken)
     return <PostsPage></PostsPage>;
   else return <LoginPage></LoginPage>;
+
 }

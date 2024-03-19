@@ -2,16 +2,14 @@
 import BottomNavBar from "@/components/bottomnav";
 import { Media } from "@/components/media";
 import { BASE_URL } from "@/utils/api";
-import { setRef } from "@mui/material";
-import React, { Suspense, useEffect, useState } from "react";
-type User = {
-  email: string;
-  id: number;
-  joinedOn: string;
-  lastPostTime: string;
-  maxStreak: number;
-  streak: number;
-};
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import '@/utils/api';
+import axios from "axios";
+import MyAppBar from '@/components/appbar';
+import { useRouter } from 'next/navigation';
+
+
 type Post = {
   answers: string[];
   description: string;
@@ -21,7 +19,7 @@ type Post = {
   multimedia: string;
   timestamp: string;
   total_likes: string;
-  user: User;
+  username: String;
 };
 
 const getTimeAgo = (timestamp: string): string => {
@@ -35,52 +33,83 @@ const getTimeAgo = (timestamp: string): string => {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return `${days} day${days === 1 ? "" : "s"} ago`;
+    return `${days} day${days === 1 ? '' : 's'} ago`;
   } else if (hours > 0) {
-    return `${hours} hour${hours === 1 ? "" : "s"} and ${minutes % 60} minute${
-      minutes % 60 === 1 ? "" : "s"
+    return `${hours} hour${hours === 1 ? '' : 's'} and ${minutes % 60} minute${
+      minutes % 60 === 1 ? '' : 's'
     } ago`;
   } else {
-    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+    return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
   }
 };
+
 export default function Discover() {
   const [postData, setPostData] = useState<any>([]);
-  let posts: any[] = [];
+  const accessToken = Cookies.get('huesAccessToken');
+  const refreshToken = Cookies.get('huesRefreshToken');
+
+  const handleLogout = async () => {
+    Cookies.remove('huesAccessToken');
+    Cookies.remove('huesRefreshToken');
+    window.location.href = '/login';
+  };
+
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-    console.log("accessToken", accessToken);
-    fetch(BASE_URL + "/feed/latest", {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Token": accessToken ?? "",
-        "Refresh-Token": refreshToken ?? "",
-      },
-    })
-      .then((response) => response.json())
-      .then((data: Post[]) => {
-        console.log("posts ", data);
-        let sortedPosts = data.sort(
-          (a: Post, b: Post) =>
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        );
-        setPostData(data);
-      });
-    console.log("posts ", posts);
-  }, []);
-  const images = [
-    "https://via.placeholder.com/500",
-    "https://via.placeholder.com/300",
-    "https://via.placeholder.com/300",
-    "https://via.placeholder.com/300",
-    "https://via.placeholder.com/300",
-    "https://via.placeholder.com/300",
-  ];
+    if (!accessToken || !refreshToken) {
+      window.location.href = '/login';
+    }
+  
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/v1/feed`, {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
+  
+        if (response.status === 200) {
+          setPostData(response.data.posts);
+        } else {
+          const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, {
+            refresh: refreshToken
+          }, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+  
+          if (refreshResponse.status === 200) {
+            Cookies.set("huesAccessToken", refreshResponse.data.access);
+            const newResponse = await axios.get(`${BASE_URL}/v1/feed`, {
+              headers: {
+                "Authorization": `Bearer ${refreshResponse.data.access}`,
+              },
+            });
+            if (newResponse.status === 200) {
+              setPostData(newResponse.data.posts);
+            } else {
+              handleLogout();
+            }
+          } else {
+            handleLogout();
+          }
+        }
+      } catch (error) {
+        handleLogout();
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, [accessToken, refreshToken]);
+  
   return (
     <div>
-      <div className="bg-white text-slate-800 container mx-auto px-4 py-16">
-        <h2 className="text-3xl mb-8 font-bold text-primary">Discover</h2>
+      <div className="bg-white text-slate-800 container mx-auto px-4 py-8">
+        <MyAppBar
+          onBackButtonClick={() => router.back()}
+          title="Discover"
+        ></MyAppBar>
         <div className="flex flex-wrap">
           {postData.map((post: Post, index: number) => (
             <div
@@ -101,11 +130,3 @@ export default function Discover() {
     </div>
   );
 }
-
-// export default function Page() {
-//   return (
-//     <Suspense fallback={<div>Loading....</div>}>
-//       <Discover></Discover>
-//     </Suspense>
-//   );
-// }

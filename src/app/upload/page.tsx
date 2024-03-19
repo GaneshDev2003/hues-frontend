@@ -1,13 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import AppBar from "@/components/appbar";
-import { Medula_One } from "next/font/google";
 import BottomNavBar from "@/components/bottomnav";
 import { BASE_URL } from "@/utils/api";
+import axios from "axios";
+import Cookies from "js-cookie";
+import MyAppBar from '@/components/appbar';
+import { useRouter } from 'next/navigation';
+
 
 const UploadPostPage: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [mediaUrl, setMediaUrl] = useState<string | null>();
   const [answer1, setAnswer1] = useState<string>();
@@ -15,15 +18,24 @@ const UploadPostPage: React.FC = () => {
   const [answer3, setAnswer3] = useState<string>();
   const [answer4, setAnswer4] = useState<string>();
 
-  const [videoSrc, seVideoSrc] = useState("");
+  const [videoSrc, seVideoSrc] = useState('');
+  const accessToken = Cookies.get('huesAccessToken');
+  const refreshToken = Cookies.get('huesRefreshToken');
+
+  const handleLogout = async () => {
+    Cookies.remove('huesAccessToken');
+    Cookies.remove('huesRefreshToken');
+    window.location.href = '/login';
+  };
 
   const refreshPage = () => {
-    setContent("");
+    setContent('');
     setImage(null);
-    setAnswer1("");
-    setAnswer2("");
-    setAnswer3("");
+    setAnswer1('');
+    setAnswer2('');
+    setAnswer3('');
   };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
@@ -35,7 +47,7 @@ const UploadPostPage: React.FC = () => {
     setContent(e.target.value);
   };
 
-  const [emotions, setEmotions] = useState<string>();
+  const [emotions, setEmotions] = useState<string>('Happy');
   const handleEmotionChange = (e: any) => {
     setEmotions(e.target.value);
   };
@@ -55,46 +67,74 @@ const UploadPostPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    let answers = [answer1, answer2, answer3];
     e.preventDefault();
-
-    // Prepare data to send to backend
+    let answers = [answer1, answer2, answer3];
     const postData = {
-      url: mediaUrl ?? "",
-      description: content, // Assuming 'content' holds the description
-      emotions: [emotions], // Assuming 'emotions' is an empty array for now
-      answers: answers, // Assuming 'answers' is an empty array for now
+      url: mediaUrl ?? '',
+      description: content,
+      emotions: [emotions],
+      answers: answers,
     };
-    const accessToken = localStorage.getItem("accessToken") ?? "_";
-    const refreshToken = localStorage.getItem("refreshToken") ?? "_";
-    44;
 
-    console.log(accessToken);
-    console.log(refreshToken);
-    // Send data to your backend endpoint
-    if (mediaUrl)
-      fetch(BASE_URL + "/post/", {
-        method: "POST",
+    try {
+      const response = await axios.post(`${BASE_URL}/v1/post`, postData, {
         headers: {
           "Content-Type": "application/json",
-          "Access-Token": accessToken, // Include your access token here
-          "Refresh-Token": refreshToken, // Include your refresh token here
+          "Authorization": `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(postData),
-      })
-        .then((response) => {
-          alert("Your post was successfully uploaded :)");
-          refreshPage();
-        })
-        .catch((response) => {
-          alert("Upload post failed!");
-        });
-  };
+      });
+  
+      if (response.status === 201) {
+        alert("Your post was successfully uploaded :)");
+        refreshPage();
+      }
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        try {
+          const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, {
+            refresh: refreshToken
+          }, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
+  
+          if (refreshResponse.status === 200) {
+            Cookies.set("huesAccessToken", refreshResponse.data.access);
+            const newResponse = await axios.post(`${BASE_URL}/v1/post`, postData, {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshResponse.data.access}`,
+              },
+            });
+  
+            if (newResponse.status === 201) {
+              alert("Your post was successfully uploaded :)");
+              refreshPage();
+            } else {
+              handleLogout();
+            }
+          } else {
+            handleLogout();
+          }
+        } catch (error) {
+          handleLogout();
+        }
+      } else {
+        alert("Upload post failed!");
+      }
+    }
 
+  };
+  const router = useRouter();
   return (
     <>
       <div>
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-8 mb-8">
+          <MyAppBar
+            title="Upload"
+            onBackButtonClick={() => router.back()}
+          ></MyAppBar>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
@@ -177,10 +217,7 @@ const UploadPostPage: React.FC = () => {
             </div>
 
             <div className="mb-4">
-              <label
-                htmlFor="image"
-                className="block text-primary font-bold mb-2"
-              >
+              <label htmlFor="image" className="block text-primary mb-2">
                 Based on the above answers & anything else you wish to express,
                 upload a creative piece. Video, text, image and audio are
                 supported.
@@ -196,26 +233,26 @@ const UploadPostPage: React.FC = () => {
             {mediaUrl ? (
               <div className="container mx-auto">
                 <h3 className="text-lg text-primary my-3">Preview</h3>
-                {mediaUrl.endsWith(".mp4") ? ( // Example condition for video
+                {mediaUrl.endsWith('.mp4') ? (
                   <video controls>
                     <source src={mediaUrl} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={mediaUrl} alt="Uploaded media" /> // Example for image
+                  <img src={mediaUrl} alt="Uploaded media" />
                 )}
               </div>
             ) : (
               <button
                 onClick={async () => {
                   const formData: any = new FormData();
-                  formData.append("file", image);
-                  formData.append("upload_preset", "hdaxh1mb");
+                  formData.append('file', image);
+                  formData.append('upload_preset', 'hdaxh1mb');
                   const cloudinaryResponse = await fetch(
-                    "https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload",
+                    'https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload',
                     {
-                      method: "POST",
+                      method: 'POST',
                       body: formData,
-                    }
+                    },
                   );
                   const cloudinaryData = await cloudinaryResponse.json();
                   const imageUrl = cloudinaryData.url;

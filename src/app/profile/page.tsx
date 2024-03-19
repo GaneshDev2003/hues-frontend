@@ -1,21 +1,33 @@
 "use client";
-import React from "react";
-import AppBar from "@/components/appbar";
-import { signOut, useSession } from "next-auth/react";
+import React, { useEffect } from "react";
 import Image from "next/image";
-import { Button, Divider } from "@mui/material";
+import { Divider } from "@mui/material";
 import { useRouter } from "next/navigation";
 import BottomNavBar from "@/components/bottomnav";
+import Cookies from "js-cookie";
+import { signOut } from "next-auth/react";
+import { FormInput } from 'lucide-react';
 
 const ProfilePage = () => {
   const router = useRouter();
+  const accessToken = Cookies.get('huesAccessToken');
+  const refreshToken = Cookies.get('huesRefreshToken');
+
   const handleLogout = async () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+
     await signOut();
+    Cookies.remove("huesAccessToken");
+    Cookies.remove("huesRefreshToken");
     window.location.href = "/login";
+
   };
-  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (!accessToken || !refreshToken) {
+      window.location.href = '/login';
+    }
+  });
+
   return (
     <div>
       <div className="bg-white text-slate-800 container mx-auto px-4 py-16 h-screen">
@@ -36,7 +48,18 @@ const ProfilePage = () => {
                   height={20}
                   className="inline"
                 ></Image>
-                <h3 className="inline font-semibold text-xl mx-3">Posts</h3>
+                <h3 className="inline font-semibold text-xl mx-3">
+                  Your Posts
+                </h3>
+              </div>
+            </a>
+            <Divider></Divider>
+            <a href="/feedback">
+              <div className="my-2">
+                <FormInput className="inline"></FormInput>
+                <h3 className="inline font-semibold text-xl mx-3">
+                  Give Feedback
+                </h3>
               </div>
             </a>
             <Divider></Divider>

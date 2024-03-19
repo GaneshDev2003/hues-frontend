@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  reactStrictMode: false,
+};
 import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
