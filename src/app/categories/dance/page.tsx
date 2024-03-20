@@ -6,6 +6,9 @@ export default function Art() {
   return (
     <div>
         <div className = "bg-white text-slate-800 container mx-auto px-4 py-8 my-auto">
+        <div className='font-bold text-3xl text-primary text-center mb-4 gap-2'>
+          Dancing
+        </div>
             <div className = "flex flex-row mb-4 gap-2">
             <img className = "object-contain w-full" src = "/images/dancing.png"></img>
                 <h1 className = "font-bold text-xl text-black">You can do any of these to express your emotions through dance!</h1>

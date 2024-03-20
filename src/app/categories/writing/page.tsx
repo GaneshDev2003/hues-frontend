@@ -6,13 +6,16 @@ export default function Art() {
   return (
     <div>
       <div className="bg-white text-slate-800 container mx-auto px-4 py-16">
+      <div className='font-bold text-3xl text-primary text-center mb-4 gap-2'>
+          Writing
+        </div>
         <div className="flex flex-row mb-4 gap-2">
           <img
             className="object-contain w-full"
             src="/images/writing_large.png"
           ></img>
           <h1 className="font-bold text-xl text-black">
-            You can do any of these to express your emotions through art !
+            You can do any of these to express your emotions through writing !
           </h1>
         </div>
 

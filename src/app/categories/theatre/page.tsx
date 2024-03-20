@@ -6,6 +6,9 @@ export default function Art() {
   return (
     <div>
       <div className="bg-white text-slate-800 container mx-auto px-4 py-8">
+      <div className='font-bold text-3xl text-primary text-center mb-4 gap-2'>
+          Theatre
+        </div>
         <div className="flex flex-row mb-4 gap-2">
           <img
             className="object-contain w-full"

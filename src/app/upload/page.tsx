@@ -17,7 +17,7 @@ const UploadPostPage: React.FC = () => {
   const [answer2, setAnswer2] = useState<string>();
   const [answer3, setAnswer3] = useState<string>();
   const [answer4, setAnswer4] = useState<string>();
-
+  const [customEmotion, setCustomEmotion] = useState<string>('');
   const [videoSrc, seVideoSrc] = useState('');
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
@@ -144,9 +144,11 @@ const UploadPostPage: React.FC = () => {
                 How are you feeling?
               </label>
               <div className="relative w-full lg:max-w-sm">
+              {emotions !== 'Others' ? (
                 <select
-                  onChange={handleEmotionChange}
+                  id="emotion"
                   value={emotions}
+                  onChange={handleEmotionChange}
                   className="w-full p-2.5 text-primary bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
                 >
                   <option>Happy</option>
@@ -154,7 +156,18 @@ const UploadPostPage: React.FC = () => {
                   <option>Anxious</option>
                   <option>Grateful</option>
                   <option>Joyous</option>
+                  <option>Others</option>
                 </select>
+              ) : (
+                <input
+                  id="emotion"
+                  type="text"
+                  value={customEmotion}
+                  onChange={(e) => setCustomEmotion(e.target.value)}
+                  placeholder="Enter your emotion"
+                  className="w-full p-2.5 text-primary bg-white border rounded-md shadow-sm outline-none focus:border-indigo-600"
+                />
+              )}
               </div>
             </div>
             <div className="mb-4">

@@ -33,7 +33,7 @@ const ProfilePage = () => {
       <div className="bg-white text-slate-800 container mx-auto px-4 py-16 h-screen">
         <div className="items-center">
           <span>
-            <h2 className="font-bold text-2xl mr-3">Your Account</h2>
+            <h2 className="font-bold text-primary text-2xl mr-3">Your Account</h2>
             <span className=" text-textsecondary">
               Express your emotions creatively!
             </span>

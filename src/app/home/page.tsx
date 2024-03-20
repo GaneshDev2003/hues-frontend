@@ -92,7 +92,7 @@ const PostsPage = () => {
           <h2 className="text-xl font-bold text-white">Hey There!</h2>
           <h3 className="font-bold text-white">How are you feeling today?</h3>
           <h3 className="font-bold text-white">
-            Time to be creative about it!
+          Time to be expressive about it!
           </h3>
           <button
             onClick={() => router.push('/upload')}
