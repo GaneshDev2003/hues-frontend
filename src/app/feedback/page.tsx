@@ -5,6 +5,7 @@ import { BASE_URL } from '@/utils/api';
 import Cookies from 'js-cookie';
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const UploadPostPage: React.FC = () => {
   const [feedback, setFeedback] = useState<string>('');
@@ -24,69 +25,68 @@ const UploadPostPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
     const feedBackData = {
       text: feedback,
     };
-
-    if (feedback)
-      fetch(BASE_URL + '/v2/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + accessToken,
-        },
-        body: JSON.stringify(feedBackData),
-      })
-        .then((response) => {
-          if (response.status == 201) {
-            alert('Your feedback was uploaded :)');
-          } else if (response.status == 401) {
-            fetch(BASE_URL + '/v1/refresh', {
-              method: 'POST',
+  
+    if (feedback) {
+      try {
+        const response = await axios.post(`${BASE_URL}/v2/feedback`, feedBackData, {
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${accessToken}`,
+          }
+        });
+  
+        if (response.status === 201) {
+          alert('Your feedback was uploaded :)');
+          console.log("yesss");
+          router.push('/profile');
+        } else {
+          // Handle other status codes if needed
+        }
+      } catch (error:any) {
+        if (error.response && error.response.status === 401) {
+          try {
+            const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, { refresh: refreshToken }, {
               headers: {
                 'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ refresh: refreshToken }),
-            })
-              .then((response) => {
-                if (response.status == 200) {
-                  return response.json();
-                } else {
-                  handleLogout();
+              }
+            });
+  
+            if (refreshResponse.status === 200) {
+              const tokenData = refreshResponse.data;
+              Cookies.set('huesAccessToken', tokenData.access);
+  
+              const feedbackResponse = await axios.post(`${BASE_URL}/v2/feedback`, feedBackData, {
+                headers: {
+                  'Content-Type': 'application/json',
+                  "Authorization": `Bearer ${tokenData.access}`,
                 }
-              })
-              .then((tokenData) => {
-                Cookies.set('huesAccessToken', tokenData.access);
-                fetch(BASE_URL + '/v1/post', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + tokenData.access,
-                  },
-                  body: JSON.stringify(feedBackData),
-                })
-                  .then((response) => {
-                    if (response.status == 201) {
-                      alert('Your post was successfully uploaded :)');
-
-                      router.push('/profile');
-                    } else {
-                      handleLogout();
-                    }
-                  })
-                  .catch((response) => {
-                    handleLogout();
-                  });
-              })
-              .catch((response) => {
-                handleLogout();
               });
+  
+              if (feedbackResponse.status === 201) {
+                alert('Your feedback was uploaded :)');
+                console.log("yesss");
+                router.push('/profile');
+              } else {
+                handleLogout();
+              }
+            } else {
+              handleLogout();
+            }
+          } catch (error) {
+            handleLogout();
           }
-        })
-        .catch((response) => {
+        } else {
           alert('Upload post failed!');
-        });
+          console.log("noooooo");
+        }
+      }
+    }
   };
+  
   const router = useRouter();
   return (
     <>
