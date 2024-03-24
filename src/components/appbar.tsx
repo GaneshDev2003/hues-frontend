@@ -1,5 +1,5 @@
 'use client';
-import { Flame } from 'lucide-react';
+import { ArrowLeft, Flame } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 interface AppBarProps {
@@ -14,26 +14,13 @@ const MyAppBar: React.FC<AppBarProps> = ({ title, onBackButtonClick }) => {
   }, []);
   return (
     <div>
-      <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto py-3 flex items-center justify-between">
         {onBackButtonClick && (
           <button
             onClick={onBackButtonClick}
             className="font-semibold text-textcolor py-2 text-xl border border-white rounded inline-flex items-center"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <ArrowLeft></ArrowLeft>
           </button>
         )}
         <div className="text-3xl font-bold text-textcolor">{title}</div>

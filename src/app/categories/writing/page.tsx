@@ -1,14 +1,18 @@
 'use client';
+import MyAppBar from '@/components/appbar';
 import BottomNavBar from '@/components/bottomnav';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 export default function Art() {
+  const router = useRouter();
   return (
     <div>
       <div className="bg-white text-slate-800 container mx-auto px-4 py-16">
-      <div className='font-bold text-3xl text-primary text-center mb-4 gap-2'>
-          Writing
-        </div>
+        <MyAppBar
+          title="Theatre"
+          onBackButtonClick={() => router.back()}
+        ></MyAppBar>
         <div className="flex flex-row mb-4 gap-2">
           <img
             className="object-contain w-full"
@@ -21,8 +25,8 @@ export default function Art() {
 
         <div className="flex max-w-screen flex-col gap-y-4">
           <div
-            className="bg-cover bg-no-repeat py-5 px-3 overflow-hidden text-center"
-            style={{ backgroundImage: 'url("/images/rectangle.svg")' }}
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
           >
             <h2 className="font-semibold text-lg">Acrostic Poems</h2>
             <p>
@@ -32,33 +36,37 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat p-5 overflow-hidden text-center"
-            style={{ backgroundImage: 'url("/images/rectangle-alt.png")' }}
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            style={{
+              backgroundImage: 'url("/images/rectangle-design-alt.png")',
+            }}
           >
             <h2 className="font-semibold text-lg">Letter to Yourself</h2>
-            <p className="text-sm">
+            <p>
               Find solace and self-discovery in the empowering act of writing a
               letter to your own soul
             </p>
           </div>
 
           <div
-            className="bg-cover bg-no-repeat p-5 overflow-hidden text-center"
-            style={{ backgroundImage: 'url("/images/rectangle.svg")' }}
+            className="bg-cover bg-no-repeat p-5 rounded-xl text-center"
+            style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
           >
             <h2 className="font-semibold text-lg">Inner Dialogue Writing</h2>
-            <p className="text-sm">
+            <p>
               Find solace and self-discovery in the empowering act of writing a
               letter to your own soul
             </p>
           </div>
 
           <div
-            className="bg-cover bg-no-repeat p-5 overflow-hidden text-center"
-            style={{ backgroundImage: 'url("/images/rectangle-alt.png")' }}
+            className="bg-cover bg-no-repeat p-5 rounded-xl text-center"
+            style={{
+              backgroundImage: 'url("/images/rectangle-design-alt.png")',
+            }}
           >
             <h2 className="font-semibold text-lg">Flash Fiction</h2>
-            <p className="text-sm">
+            <p>
               {' '}
               Ignite your imagination with quick bursts of storytelling,
               creating vibrant worlds in just a few words

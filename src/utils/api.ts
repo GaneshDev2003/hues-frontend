@@ -1,51 +1,62 @@
 import axios from 'axios';
-
+import Cookies from 'js-cookie';
 export const BASE_URL: string = 'https://huesofchennai.azurewebsites.net/api';
 
 let isRefreshing = false;
-let failedQueue: { resolve: (token: string) => void; reject: (error: any) => void; }[] = [];
-
-axios.interceptors.response.use(
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}[] = [];
+const axiosInstance = axios.create();
+axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     const originalRequest = error.config;
 
     if (error.response.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
-        }).then((token) => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return axios(originalRequest);
-        }).catch((err) => {
-          return Promise.reject(err);
-        });
+        })
+          .then((token) => {
+            originalRequest.headers['Authorization'] = 'Bearer ' + token;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
 
-      return new Promise(function(resolve, reject) {
-        axios.post('/refreshTokenEndpoint', {
-          refreshToken: localStorage.getItem('refreshToken')
-        }).then(({ data }) => {
-          localStorage.setItem('accessToken', data.accessToken);
-          localStorage.setItem('refreshToken', data.refreshToken);
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.accessToken;
-          originalRequest.headers['Authorization'] = 'Bearer ' + data.accessToken;
-          processQueue(null, data.accessToken);
-          resolve(axios(originalRequest));
-        }).catch((err) => {
-          processQueue(err, null);
-          reject(err);
-        }).then(() => {
-          isRefreshing = false;
-        });
+      return new Promise(function (resolve, reject) {
+        axiosInstance
+          .post(`${BASE_URL}/v1/reset`, {
+            refresh: Cookies.get('huesAccessToken'),
+          })
+          .then(({ data }) => {
+            Cookies.set('huesAccessToken', data.access);
+            Cookies.set('huesRefreshToken', data.refresh);
+
+            axiosInstance.defaults.headers.common['Authorization'] =
+              'Bearer ' + data.access;
+            originalRequest.headers['Authorization'] = 'Bearer ' + data.access;
+            processQueue(null, data.access);
+            resolve(axiosInstance(originalRequest));
+          })
+          .catch((err) => {
+            processQueue(err, null);
+            reject(err);
+          })
+          .then(() => {
+            isRefreshing = false;
+          });
       });
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 function processQueue(error: any, token: string | null = null) {
@@ -58,3 +69,7 @@ function processQueue(error: any, token: string | null = null) {
   });
   failedQueue = [];
 }
+
+export const getAxios = () => {
+  return axiosInstance;
+};

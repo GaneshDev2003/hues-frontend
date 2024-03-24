@@ -1,32 +1,31 @@
-"use client";
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getSession, signIn, useSession } from "next-auth/react";
-import { BASE_URL } from "@/utils/api";
-import Cookies from "js-cookie";
-import axios from "axios";
-
+'use client';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getSession, signIn, useSession } from 'next-auth/react';
+import { BASE_URL, getAxios } from '@/utils/api';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 export default function LoginPage() {
   const router = useRouter();
+
   const { data: session, status } = useSession();
 
   useEffect(() => {
     const getSessionData = async () => {
       if (session && session.user) {
-        try {
-          const response = await axios.post(
-            `${BASE_URL}/v1/user`,
-            { email: session.user.email }
-          );
-
-          Cookies.set("huesAccessToken", response.data.access);
-          Cookies.set("huesRefreshToken", response.data.refresh);
-
-          // Redirect to home page after successful login
-          router.push("/home");
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
+        axios
+          .post(`${BASE_URL}/v1/user`, { email: session.user.email })
+          .then((response) => {
+            Cookies.set('huesAccessToken', response.data.access);
+            Cookies.set('huesRefreshToken', response.data.refresh);
+            // Redirect to home page after successful login
+            router.push('/home');
+          })
+          .catch(function (error) {
+            if (error.response.status == 302) {
+              router.push('/username');
+            }
+          });
       }
     };
 

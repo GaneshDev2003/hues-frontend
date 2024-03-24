@@ -1,18 +1,21 @@
-"use client";
-import React, { useState } from "react";
-import BottomNavBar from "@/components/bottomnav";
-import { BASE_URL } from "@/utils/api";
-import axios from "axios";
-import Cookies from "js-cookie";
+'use client';
+import React, { useState } from 'react';
+import BottomNavBar from '@/components/bottomnav';
+import { BASE_URL } from '@/utils/api';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
-
+import { tree } from 'next/dist/build/templates/app-page';
+import CustomLoader from '@/components/loader';
+import Image from 'next/image';
+import { Media } from '@/components/media';
 
 const UploadPostPage: React.FC = () => {
-  const [title, setTitle] = useState('');
+  const [isUploading, setUploading] = useState<boolean>(false);
   const [content, setContent] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [mediaUrl, setMediaUrl] = useState<string | null>();
+  const [previewUrl, setPreview] = useState<string | null>();
   const [answer1, setAnswer1] = useState<string>();
   const [answer2, setAnswer2] = useState<string>();
   const [answer3, setAnswer3] = useState<string>();
@@ -22,6 +25,11 @@ const UploadPostPage: React.FC = () => {
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
 
+  // const uploadImage = async () => {
+
+  //   setMediaUrl(imageUrl);
+  //   setImageUploading(false);
+  // };
   const handleLogout = async () => {
     Cookies.remove('huesAccessToken');
     Cookies.remove('huesRefreshToken');
@@ -38,8 +46,11 @@ const UploadPostPage: React.FC = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
+
     if (file) {
       setImage(file);
+      console.log(URL.createObjectURL(e.target.files![0]));
+      setPreview(URL.createObjectURL(e.target.files![0]));
     }
   };
 
@@ -51,8 +62,6 @@ const UploadPostPage: React.FC = () => {
   const handleEmotionChange = (e: any) => {
     setEmotions(e.target.value);
   };
-
-  const [preview, togglePreview] = useState<boolean>();
   const handleAnswer1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswer1(e.target.value);
   };
@@ -62,12 +71,23 @@ const UploadPostPage: React.FC = () => {
   const handleAnswer3 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswer3(e.target.value);
   };
-  const handleAnswer4 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAnswer4(e.target.value);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
+    const formData: any = new FormData();
+
+    formData.append('file', image);
+    formData.append('upload_preset', 'hdaxh1mb');
+    const cloudinaryResponse = await fetch(
+      'https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload',
+      {
+        method: 'POST',
+        body: formData,
+      },
+    );
+    const cloudinaryData = await cloudinaryResponse.json();
+    const mediaUrl = cloudinaryData.url;
     let answers = [answer1, answer2, answer3];
     const postData = {
       url: mediaUrl ?? '',
@@ -75,42 +95,51 @@ const UploadPostPage: React.FC = () => {
       emotions: [emotions],
       answers: answers,
     };
-
     try {
       const response = await axios.post(`${BASE_URL}/v1/post`, postData, {
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-  
+
       if (response.status === 201) {
-        alert("Your post was successfully uploaded :)");
-        refreshPage();
+        setUploading(false);
+        router.push('/discover');
+        alert('Your post was successfully uploaded :)');
       }
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         try {
-          const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, {
-            refresh: refreshToken
-          }, {
-            headers: {
-              "Content-Type": "application/json"
-            }
-          });
-  
-          if (refreshResponse.status === 200) {
-            Cookies.set("huesAccessToken", refreshResponse.data.access);
-            const newResponse = await axios.post(`${BASE_URL}/v1/post`, postData, {
+          const refreshResponse = await axios.post(
+            `${BASE_URL}/v1/refresh`,
+            {
+              refresh: refreshToken,
+            },
+            {
               headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${refreshResponse.data.access}`,
+                'Content-Type': 'application/json',
               },
-            });
-  
+            },
+          );
+
+          if (refreshResponse.status === 200) {
+            Cookies.set('huesAccessToken', refreshResponse.data.access);
+            const newResponse = await axios.post(
+              `${BASE_URL}/v1/post`,
+              postData,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${refreshResponse.data.access}`,
+                },
+              },
+            );
+
             if (newResponse.status === 201) {
-              alert("Your post was successfully uploaded :)");
-              refreshPage();
+              setUploading(false);
+              router.push('/discover');
+              alert('Your post was successfully uploaded :)');
             } else {
               handleLogout();
             }
@@ -121,16 +150,15 @@ const UploadPostPage: React.FC = () => {
           handleLogout();
         }
       } else {
-        alert("Upload post failed!");
+        alert('Upload post failed!');
       }
     }
-
   };
   const router = useRouter();
   return (
     <>
       <div>
-        <div className="container mx-auto px-4 py-8 mb-8">
+        <div className="container mx-auto px-6 py-8 mb-8">
           <MyAppBar
             title="Upload"
             onBackButtonClick={() => router.back()}
@@ -213,77 +241,95 @@ const UploadPostPage: React.FC = () => {
               ></input>
             </div>
 
-            <div className="mb-4">
-              <label
-                htmlFor="content"
-                className="block text-xl text-primary font-bold mb-2"
-              >
-                If not, what is the real fact? This is the caption for the post
-                you will be uploading
-              </label>
-              <input
-                id="content"
-                value={content}
-                onChange={handleContent}
-                className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
-              ></input>
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="image" className="block text-primary mb-2">
-                Based on the above answers & anything else you wish to express,
-                upload a creative piece. Video, text, image and audio are
-                supported.
-              </label>
-              <input
-                type="file"
-                id="image"
-                onChange={handleImageChange}
-                accept="image/*,video/*"
-                className="w-full border rounded-md py-2 px-3 text-gray-700 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            {mediaUrl ? (
-              <div className="container mx-auto">
-                <h3 className="text-lg text-primary my-3">Preview</h3>
-                {mediaUrl.endsWith('.mp4') ? (
-                  <video controls>
-                    <source src={mediaUrl} type="video/mp4" />
-                  </video>
-                ) : (
-                  <img src={mediaUrl} alt="Uploaded media" />
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={async () => {
-                  const formData: any = new FormData();
-                  formData.append('file', image);
-                  formData.append('upload_preset', 'hdaxh1mb');
-                  const cloudinaryResponse = await fetch(
-                    'https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload',
-                    {
-                      method: 'POST',
-                      body: formData,
-                    },
-                  );
-                  const cloudinaryData = await cloudinaryResponse.json();
-                  const imageUrl = cloudinaryData.url;
-                  setMediaUrl(imageUrl);
-                }}
-                className="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Upload
-              </button>
-            )}
-            <button
-              className="w-full mx-auto mt-3 mb-10 bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
+          <div className="mb-4">
+            <label
+              htmlFor="content"
+              className="block text-xl text-textcolor font-bold mb-2"
             >
-              Submit
-            </button>
-            <BottomNavBar></BottomNavBar>
-          </form>
+              If not, what is the real fact? This is the caption for the post
+              you will be uploading
+            </label>
+            <input
+              id="content"
+              value={content}
+              onChange={handleContent}
+              className="w-full border rounded-md py-2 px-3 text-xl text-textcolor focus:outline-none focus:border-blue-500"
+            ></input>
+          </div>
+
+          <div>
+            <label htmlFor="image" className="block text-textcolor">
+              Based on the above answers & anything else you wish to express,
+              upload a creative piece.
+            </label>
+          </div>
+
+          <div className="py-6">
+            <div
+              id="image-preview"
+              className="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer"
+            >
+              {previewUrl ? (
+                <Media mediaUrl={previewUrl}></Media>
+              ) : (
+                <div>
+                  <input
+                    accept="image/*,video/*"
+                    id="upload"
+                    onChange={handleImageChange}
+                    type="file"
+                    className="hidden"
+                  />
+                  <label htmlFor="upload" className="cursor-pointer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="w-8 h-8 text-gray-700 mx-auto mb-4"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                      />
+                    </svg>
+                    <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-700">
+                      Upload picture or video
+                    </h5>
+
+                    <p className="font-normal text-sm text-gray-400 md:px-6">
+                      and should be in{' '}
+                      <b className="text-gray-600">JPG, PNG, GIF or MP4</b>{' '}
+                      format.
+                    </p>
+                    <span
+                      id="filename"
+                      className="text-gray-500 bg-gray-200 z-50"
+                    ></span>
+                  </label>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center justify-center w-full">
+              {isUploading ? (
+                <CustomLoader></CustomLoader>
+              ) : (
+                <>
+                  <label className="w-full text-white bg-primary hover:bg-primary/70 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
+                    <button
+                      className="text-center text-lg ml-2"
+                      onClick={handleSubmit}
+                    >
+                      Upload
+                    </button>
+                  </label>
+                </>
+              )}
+            </div>
+          </div>
+          <BottomNavBar></BottomNavBar>
         </div>
       </div>
     </>
