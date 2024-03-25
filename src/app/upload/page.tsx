@@ -25,11 +25,6 @@ const UploadPostPage: React.FC = () => {
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
 
-  // const uploadImage = async () => {
-
-  //   setMediaUrl(imageUrl);
-  //   setImageUploading(false);
-  // };
   const handleLogout = async () => {
     Cookies.remove('huesAccessToken');
     Cookies.remove('huesRefreshToken');
@@ -163,15 +158,14 @@ const UploadPostPage: React.FC = () => {
             title="Upload"
             onBackButtonClick={() => router.back()}
           ></MyAppBar>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                htmlFor="title"
-                className="block text-primary text-xl font-bold mb-2"
-              >
-                How are you feeling?
-              </label>
-              <div className="relative w-full lg:max-w-sm">
+          <div className="mb-4">
+            <label
+              htmlFor="title"
+              className="block text-primary text-xl font-bold mb-2"
+            >
+              How are you feeling?
+            </label>
+            <div className="relative w-full lg:max-w-sm">
               {emotions !== 'Others' ? (
                 <select
                   id="emotion"
@@ -196,50 +190,50 @@ const UploadPostPage: React.FC = () => {
                   className="w-full p-2.5 text-primary bg-white border rounded-md shadow-sm outline-none focus:border-indigo-600"
                 />
               )}
-              </div>
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="content"
-                className="block text-xl text-primary font-bold mb-2"
-              >
-                Are there any benefits to feeling this way?
-              </label>
-              <input
-                id="content"
-                value={answer1}
-                onChange={handleAnswer1}
-                className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
-              ></input>
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="content"
-                className="block text-xl text-primary font-bold mb-2"
-              >
-                What do you think is the root cause of this feeling?
-              </label>
-              <input
-                id="content"
-                value={answer2}
-                onChange={handleAnswer2}
-                className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
-              ></input>
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="content"
-                className="block text-xl text-primary font-bold mb-2"
-              >
-                Is this root cause a fact?
-              </label>
-              <input
-                id="content"
-                value={answer3}
-                onChange={handleAnswer3}
-                className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
-              ></input>
-            </div>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="content"
+              className="block text-xl text-primary font-bold mb-2"
+            >
+              Are there any benefits to feeling this way?
+            </label>
+            <input
+              id="content"
+              value={answer1}
+              onChange={handleAnswer1}
+              className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
+            ></input>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="content"
+              className="block text-xl text-primary font-bold mb-2"
+            >
+              What do you think is the root cause of this feeling?
+            </label>
+            <input
+              id="content"
+              value={answer2}
+              onChange={handleAnswer2}
+              className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
+            ></input>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="content"
+              className="block text-xl text-primary font-bold mb-2"
+            >
+              Is this root cause a fact?
+            </label>
+            <input
+              id="content"
+              value={answer3}
+              onChange={handleAnswer3}
+              className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
+            ></input>
+          </div>
 
           <div className="mb-4">
             <label
