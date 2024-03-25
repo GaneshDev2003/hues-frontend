@@ -2,7 +2,7 @@
 import BottomNavBar from "@/components/bottomnav";
 import { Media } from "@/components/media";
 import { BASE_URL } from "@/utils/api";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import '@/utils/api';
 import axios from "axios";
@@ -46,6 +46,9 @@ const getTimeAgo = (timestamp: string): string => {
 export default function Discover() {
   const router = useRouter();
   const [postData, setPostData] = useState<any>([]);
+  const [morePosts, setMorePosts] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef(null);
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
 
@@ -97,16 +100,87 @@ export default function Discover() {
         }
       } catch (error) {
         handleLogout();
-        console.error("Error fetching data:", error);
       }
     };
   
     fetchData();
   }, [accessToken, refreshToken]);
+
+  const fetchMorePosts = async (postId: number, timestamp: string) => {
+    setIsLoading(true);
+    const response = await axios.post(`${BASE_URL}/v1/feed`, {postId: postId, timestamp: timestamp}, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.status === 200) {
+      if (response.data.posts.length === 0) {
+        setMorePosts(false);
+      } else {
+        setPostData(prevData => [...prevData, ...response.data.posts]);
+      }
+      setIsLoading(false);
+    } else {
+      const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, {
+        refresh: refreshToken
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (refreshResponse.status === 200) {
+        Cookies.set("huesAccessToken", refreshResponse.data.access);
+        const newResponse = await axios.get(`${BASE_URL}/v1/feed`, {
+          headers: {
+            "Authorization": `Bearer ${refreshResponse.data.access}`,
+          },
+        });
+        if (newResponse.status === 200) {
+          if (response.data.posts.length === 0) {
+            setMorePosts(false);
+          } else {
+            setPostData(prevData => [...prevData, ...response.data.posts]);
+          }
+          setIsLoading(false);
+        } else {
+          handleLogout();
+        }
+      } else {
+        handleLogout();
+      }
+    }
+  }
+
+  const callMorePostFn: IntersectionObserverCallback = (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && morePosts && !isLoading && postData.length !== 0) {
+        fetchMorePosts(postData.slice(-1)[0].id, postData.slice(-1)[0].timestamp);
+      }
+    })
+  }
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+    const observer = new IntersectionObserver(callMorePostFn, options);
+    if (observerRef.current) {
+      observer.observe(observerRef.current)
+    }
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    }
+  }, [morePosts, isLoading, postData])
   
   return (
     <div>
-      <div className="bg-white text-slate-800 container mx-auto px-4 py-8">
+      <div className="bg-white text-slate-800 container mx-auto px-4 py-8 mb-14">
         <MyAppBar
           onBackButtonClick={() => router.back()}
           title="Discover"
@@ -125,6 +199,9 @@ export default function Discover() {
               <p className="">{post.description}</p>
             </div>
           ))}
+          <div ref={observerRef} className="w-full flex items-center justify-center mt-2">
+            <div className="bg-slate-200 rounded-full h-1 w-1"></div>
+          </div>
         </div>
       </div>
       <BottomNavBar></BottomNavBar>

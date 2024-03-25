@@ -22,6 +22,7 @@ const UploadPostPage: React.FC = () => {
   const [answer4, setAnswer4] = useState<string>();
   const [customEmotion, setCustomEmotion] = useState<string>('');
   const [videoSrc, seVideoSrc] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
 
@@ -89,6 +90,7 @@ const UploadPostPage: React.FC = () => {
       description: content,
       emotions: [emotions],
       answers: answers,
+      display: isPublic
     };
     try {
       const response = await axios.post(`${BASE_URL}/v1/post`, postData, {
@@ -310,7 +312,11 @@ const UploadPostPage: React.FC = () => {
               {isUploading ? (
                 <CustomLoader></CustomLoader>
               ) : (
-                <>
+                <div className="flex flex-col w-full gap-1">
+                  <div className="flex gap-2">
+                    <input className="w-4" type="checkbox" value={isPublic} onChange={(e) => {setIsPublic(e.target.checked)}}/>
+                    <label className="text-textcolor">Make Post Public</label>
+                  </div>
                   <label className="w-full text-white bg-primary hover:bg-primary/70 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
                     <button
                       className="text-center text-lg ml-2"
@@ -319,7 +325,7 @@ const UploadPostPage: React.FC = () => {
                       Upload
                     </button>
                   </label>
-                </>
+                </div>
               )}
             </div>
           </div>
