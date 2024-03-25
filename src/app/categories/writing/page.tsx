@@ -10,7 +10,7 @@ export default function Art() {
     <div>
       <div className="bg-white text-slate-800 container mx-auto px-4 py-16">
         <MyAppBar
-          title="Theatre"
+          title="Writing"
           onBackButtonClick={() => router.back()}
         ></MyAppBar>
         <div className="flex flex-row mb-4 gap-2">
