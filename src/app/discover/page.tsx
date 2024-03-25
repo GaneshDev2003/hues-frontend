@@ -193,7 +193,9 @@ export default function Discover() {
               className="shadow-md rounded-lg w-full p-4 bg-primary/20 my-2"
             >
               {/* <Media mediaUrl={post.multimedia}></Media> */}
-              <img src={post.multimedia} alt="Media"/>
+              <div className="flex items-center justify-center w-full">
+                <img src={post.multimedia} alt="Media"/>
+              </div>
               <div className="border-t border-slate-300 my-2"></div>
               <p className="font-bold text-gray-600">
                 {getTimeAgo(post.timestamp)}
