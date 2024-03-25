@@ -41,7 +41,6 @@ const UploadPostPage: React.FC = () => {
   
         if (response.status === 201) {
           alert('Your feedback was uploaded :)');
-          console.log("yesss");
           router.push('/profile');
         } else {
           // Handle other status codes if needed
@@ -68,7 +67,6 @@ const UploadPostPage: React.FC = () => {
   
               if (feedbackResponse.status === 201) {
                 alert('Your feedback was uploaded :)');
-                console.log("yesss");
                 router.push('/profile');
               } else {
                 handleLogout();
@@ -81,7 +79,6 @@ const UploadPostPage: React.FC = () => {
           }
         } else {
           alert('Upload post failed!');
-          console.log("noooooo");
         }
       }
     }

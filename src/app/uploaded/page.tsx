@@ -76,7 +76,6 @@ export default function Discover() {
         });
 
         if (response.status === 200) {
-          console.log(response.data.posts);
           setPostData(response.data.posts);
         } else {
           const refreshResponse = await axios.post(
@@ -110,7 +109,6 @@ export default function Discover() {
         }
       } catch (error) {
         handleLogout();
-        console.error('Error fetching posts:', error);
       }
     };
 
@@ -144,7 +142,8 @@ export default function Discover() {
               >
                 {/* <Media mediaUrl={post.multimedia}></Media> */}
                 <div className="flex items-center justify-center w-full">
-                  <img src={post.multimedia} alt="Media"/>
+                  {!post.multimedia.endsWith('mp4') && <img src={post.multimedia} alt="Media"/>}
+                  {post.multimedia.endsWith('mp4') && <video autoPlay loop><source src={post.multimedia} type="video/mp4"/></video>}
                 </div>
                 <div className="border-t border-slate-300 my-2"></div>
                 <div className="flex justify-between">

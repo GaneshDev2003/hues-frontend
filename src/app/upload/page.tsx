@@ -15,13 +15,13 @@ const UploadPostPage: React.FC = () => {
   const [isUploading, setUploading] = useState<boolean>(false);
   const [content, setContent] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [previewUrl, setPreview] = useState<string | null>();
+  const [previewUrl, setPreview] = useState<string | undefined>();
   const [answer1, setAnswer1] = useState<string>();
   const [answer2, setAnswer2] = useState<string>();
   const [answer3, setAnswer3] = useState<string>();
   const [answer4, setAnswer4] = useState<string>();
   const [customEmotion, setCustomEmotion] = useState<string>('');
-  const [videoSrc, seVideoSrc] = useState('');
+  const [mediaType, setMediaType] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
@@ -45,7 +45,11 @@ const UploadPostPage: React.FC = () => {
 
     if (file) {
       setImage(file);
-      console.log(URL.createObjectURL(e.target.files![0]));
+      if (file.type.startsWith("image")) {
+        setMediaType("image");
+      } else {
+        setMediaType("video");
+      }
       setPreview(URL.createObjectURL(e.target.files![0]));
     }
   };
@@ -72,11 +76,10 @@ const UploadPostPage: React.FC = () => {
     e.preventDefault();
     setUploading(true);
     const formData: any = new FormData();
-
     formData.append('file', image);
     formData.append('upload_preset', 'hdaxh1mb');
     const cloudinaryResponse = await fetch(
-      'https://api.cloudinary.com/v1_1/dw6nqwlyu/image/upload',
+      `https://api.cloudinary.com/v1_1/dw6nqwlyu/${mediaType}/upload`,
       {
         method: 'POST',
         body: formData,
@@ -147,6 +150,7 @@ const UploadPostPage: React.FC = () => {
           handleLogout();
         }
       } else {
+        setUploading(false);
         alert('Upload post failed!');
       }
     }
@@ -265,8 +269,8 @@ const UploadPostPage: React.FC = () => {
               id="image-preview"
               className="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer"
             >
-              {previewUrl ? (
-                <Media mediaUrl={previewUrl}></Media>
+              {(mediaType !== '') ? (
+                (mediaType === 'video')?(<video autoPlay loop><source src={previewUrl} type="video/mp4"/></video>):(<img src={previewUrl} alt="Image"/>)
               ) : (
                 <div>
                   <input

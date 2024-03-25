@@ -194,7 +194,8 @@ export default function Discover() {
             >
               {/* <Media mediaUrl={post.multimedia}></Media> */}
               <div className="flex items-center justify-center w-full">
-                <img src={post.multimedia} alt="Media"/>
+                  {!post.multimedia.endsWith('mp4') && <img src={post.multimedia} alt="Media"/>}
+                  {post.multimedia.endsWith('mp4') && <video autoPlay loop><source src={post.multimedia} type="video/mp4"/></video>}
               </div>
               <div className="border-t border-slate-300 my-2"></div>
               <p className="font-bold text-gray-600">
