@@ -8,7 +8,7 @@ export default function Art() {
   const router = useRouter();
   return (
     <div>
-      <div className="bg-white text-slate-800 container mx-auto px-4 py-8">
+      <div className="bg-white text-slate-800 container mx-auto px-4 py-8 mb-14">
         <MyAppBar
           title="Theatre"
           onBackButtonClick={() => router.back()}

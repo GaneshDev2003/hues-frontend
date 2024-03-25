@@ -25,7 +25,8 @@ const MyAppBar: React.FC<AppBarProps> = ({ title, onBackButtonClick }) => {
         )}
         <div className="text-3xl font-bold text-textcolor">{title}</div>
         <div className="flex items-center text-orange-800">
-          <Flame color="orange" scale={2} />
+          {(streak == '0') && <Flame color="orange" scale={2}/>}
+          {(streak !== '0') && <Flame color="orange" scale={2} fill="orange"/>}
           <p>{streak}</p>
         </div>
       </div>

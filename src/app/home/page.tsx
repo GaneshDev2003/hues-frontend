@@ -68,7 +68,6 @@ const PostsPage = () => {
       })
       .then((data) => {
         if (data) {
-          console.log(data);
           Cookies.set('currentStreak', data.current_streak);
           Cookies.set('maxStreak', data.max_streak);
         }
@@ -80,13 +79,13 @@ const PostsPage = () => {
 
   return (
     <div>
-      <div className="bg-white text-slate-800 container mx-auto px-4 py-8 mb-12">
+      <div className="bg-white text-slate-800 container mx-auto px-4 py-8 mb-14">
         <MyAppBar
           onBackButtonClick={() => router.back()}
           title="Hues"
         ></MyAppBar>
         <div
-          className="bg-cover flex flex-col items-center justify-items-center rounded-lg shadow-md py-10 items-center my-4"
+          className="bg-cover flex flex-col justify-items-center rounded-lg shadow-md py-10 items-center my-4"
           style={{ backgroundImage: 'url("images/upload-bg.png")' }}
         >
           <h2 className="text-xl font-bold text-white">Hey There!</h2>
@@ -104,40 +103,42 @@ const PostsPage = () => {
         <h1 className="text-textcolor font-bold my-2 text-2xl">
           Creativity Catalogue
         </h1>
-        <div className="grid grid-cols-2 gap-4 flex flex-col justify-between align-center">
-          <a href="/categories/music">
-            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
-              <img src="images/music.png"></img>
-              <h3 className="text-textcolor font-bold">Music</h3>
-            </div>
-          </a>
-          <a href="/categories/writing">
-            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
-              <h3 className="text-textcolor font-bold">Writing</h3>
-              <img src="images/writing.png"></img>
-            </div>
-          </a>
+        <div className="flex flex-col items-center w-full gap-2">
+          <div className='flex items-center justify-center w-full gap-4'>
+            <a className="w-1/2" href="/categories/music">
+              <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+                <img src="images/music.png"></img>
+                <h3 className="text-textcolor font-bold">Music</h3>
+              </div>
+            </a>
+            <a className="w-1/2" href="/categories/writing">
+              <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+                <h3 className="text-textcolor font-bold">Writing</h3>
+                <img src="images/writing.png"></img>
+              </div>
+            </a>
+          </div>
+          <div className='flex items-center justify-center w-full gap-4'>
+            <a className="w-1/2" href="/categories/art">
+              <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+                <img src="images/drawing.png"></img>
+                <h3 className="text-textcolor font-bold">Art</h3>
+              </div>
+            </a>
 
-          <a href="/categories/art">
-            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
-              <img src="images/drawing.png"></img>
-              <h3 className="text-textcolor font-bold">Drawing and Painting</h3>
-            </div>
-          </a>
-
-          <a href="/categories/dance">
-            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
-              <h3 className="text-textcolor font-bold">Dancing</h3>
-              <img src="images/dancing.png"></img>
-            </div>
-          </a>
-
-          <a href="/categories/theatre">
-            <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
-              <h3 className="text-textcolor font-bold">Theatre</h3>
-              <img src="images/theatre.png"></img>
-            </div>
-          </a>
+            <a className="w-1/2" href="/categories/dance">
+              <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+                <h3 className="text-textcolor font-bold">Dancing</h3>
+                <img src="images/dancing.png"></img>
+              </div>
+            </a>
+          </div>
+            <a className="w-1/2" href="/categories/theatre">
+              <div className="flex border-2 border-secondary flex-row items-center justify-center p-2 rounded-xl">
+                <h3 className="text-textcolor font-bold">Theatre</h3>
+                <img src="images/theatre.png"></img>
+              </div>
+            </a>
         </div>
       </div>
       <BottomNavBar></BottomNavBar>
