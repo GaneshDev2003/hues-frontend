@@ -20,6 +20,7 @@ type Post = {
   timestamp: string;
   total_likes: string;
   username: String;
+  display: boolean;
 };
 
 const getTimeAgo = (timestamp: string): string => {
@@ -45,7 +46,7 @@ const getTimeAgo = (timestamp: string): string => {
 
 export default function Discover() {
   const router = useRouter();
-  const [postData, setPostData] = useState<any>([]);
+  const [postData, setPostData] = useState<Post[]>([]);
   const [morePosts, setMorePosts] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const observerRef = useRef(null);
