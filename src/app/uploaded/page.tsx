@@ -117,7 +117,7 @@ export default function Discover() {
 
   return (
     <div className="bg-white text-slate-800 container mx-auto h-screen">
-      <div className="mx-4 my-8">
+      <div className="mx-4 py-8">
         <MyAppBar
           title="Your Posts"
           onBackButtonClick={() => router.back()}
@@ -134,7 +134,7 @@ export default function Discover() {
           content="Are you sure you want to delete this post?"
         ></CustomModal>
         {postData.length > 0 ? (
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap mb-16">
             {postData.map((post: Post, index: number) => (
               <div
                 key={index}

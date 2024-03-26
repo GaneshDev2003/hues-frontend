@@ -1,11 +1,10 @@
 'use client';
 import React, { useState } from 'react';
 import BottomNavBar from '@/components/bottomnav';
-import { BASE_URL } from '@/utils/api';
+import { BASE_URL, getAxios } from '@/utils/api';
 import Cookies from 'js-cookie';
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 
 const UploadPostPage: React.FC = () => {
   const [feedback, setFeedback] = useState<string>('');
@@ -13,7 +12,7 @@ const UploadPostPage: React.FC = () => {
   const [videoSrc, seVideoSrc] = useState('');
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
-
+  const axios = getAxios();
   const handleFeedbackChange = (e: any) => {
     setFeedback(e.target.value);
   };
@@ -25,46 +24,57 @@ const UploadPostPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const feedBackData = {
       text: feedback,
     };
-  
+
     if (feedback) {
       try {
-        const response = await axios.post(`${BASE_URL}/v2/feedback`, feedBackData, {
-          headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${accessToken}`,
-          }
-        });
-  
-        if (response.status === 201) {
+        const response = await axios.post(
+          `${BASE_URL}/v2/feedback`,
+          feedBackData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        if (response.status === 201 || response.status === 200) {
           alert('Your feedback was uploaded :)');
           router.push('/profile');
         } else {
           // Handle other status codes if needed
         }
-      } catch (error:any) {
+      } catch (error: any) {
         if (error.response && error.response.status === 401) {
           try {
-            const refreshResponse = await axios.post(`${BASE_URL}/v1/refresh`, { refresh: refreshToken }, {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            });
-  
+            const refreshResponse = await axios.post(
+              `${BASE_URL}/v1/refresh`,
+              { refresh: refreshToken },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              },
+            );
+
             if (refreshResponse.status === 200) {
               const tokenData = refreshResponse.data;
               Cookies.set('huesAccessToken', tokenData.access);
-  
-              const feedbackResponse = await axios.post(`${BASE_URL}/v2/feedback`, feedBackData, {
-                headers: {
-                  'Content-Type': 'application/json',
-                  "Authorization": `Bearer ${tokenData.access}`,
-                }
-              });
-  
+
+              const feedbackResponse = await axios.post(
+                `${BASE_URL}/v2/feedback`,
+                feedBackData,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${tokenData.access}`,
+                  },
+                },
+              );
+
               if (feedbackResponse.status === 201) {
                 alert('Your feedback was uploaded :)');
                 router.push('/profile');
@@ -83,7 +93,7 @@ const UploadPostPage: React.FC = () => {
       }
     }
   };
-  
+
   const router = useRouter();
   return (
     <>

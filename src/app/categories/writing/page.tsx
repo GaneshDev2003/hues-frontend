@@ -8,7 +8,7 @@ export default function Art() {
   const router = useRouter();
   return (
     <div>
-      <div className="bg-white text-slate-800 container mx-auto px-4 py-16 mb-8">
+      <div className="bg-white text-slate-800 container mx-auto px-4 py-8 mb-8">
         <MyAppBar
           title="Writing"
           onBackButtonClick={() => router.back()}
@@ -54,13 +54,13 @@ export default function Art() {
           >
             <h2 className="font-semibold text-lg">Inner Dialogue Writing</h2>
             <p>
-              Find solace and self-discovery in the empowering act of writing a
-              letter to your own soul
+              Explore your feelings through a conversation with yourself, just
+              let your thoughts flow onto the page
             </p>
           </div>
 
           <div
-            className="bg-cover bg-no-repeat p-5 rounded-xl text-center"
+            className="bg-cover bg-no-repeat p-5 mb-16 rounded-xl text-center"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}

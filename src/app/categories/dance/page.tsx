@@ -59,7 +59,7 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl mb-16 p-5 text-center"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
