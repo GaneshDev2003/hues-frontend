@@ -1,5 +1,5 @@
 'use strict';
-
+declare var registration: any;
 console.log('Custom Service Worker');
 const reminderNotification = () => {
   registration.showNotification('Reminder', {
