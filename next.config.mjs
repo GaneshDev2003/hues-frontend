@@ -2,10 +2,13 @@
 const nextConfig = {
   reactStrictMode: false,
 };
-import withPWAInit from "@ducanh2912/next-pwa";
+
+import withPWAInit from '@ducanh2912/next-pwa';
 
 const withPWA = withPWAInit({
-  dest: "public",
+  dest: 'public',
+  customWorkerSrc: 'service-worker',
+  customWorkerPrefix: 'not/a-worker',
 });
 
 export default withPWA(nextConfig);
