@@ -22,7 +22,6 @@ export default function Art() {
             You can do any of these to express your emotions through drama!
           </h1>
         </div>
-
         <div className="flex flex-col gap-y-4">
           <div
             className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
@@ -41,7 +40,7 @@ export default function Art() {
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
           >
-            <h2 className="font-semibold text-lg">Collage Making</h2>
+            <h2 className="font-semibold text-lg">Role Playing</h2>
             <p>
               Embody a character, create a world, and let your imagination soar.
               Unleash your creativity and have some fun
@@ -52,10 +51,10 @@ export default function Art() {
             className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
           >
-            <h2 className="font-semibold text-lg mb-2">Neurographic Art</h2>
+            <h2 className="font-semibold text-lg mb-2">Dramatic Reading</h2>
             <p>
-               Bring words to life, paint a picture with your voice. Discover
-              the power of storytelling
+              Bring words to life, paint a picture with your voice. Discover the
+              power of storytelling
             </p>
           </div>
 
@@ -65,7 +64,7 @@ export default function Art() {
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
           >
-            <h2 className="font-semibold text-lg mb-2">Doodling</h2>
+            <h2 className="font-semibold text-lg mb-2">Miming</h2>
             <p>
               Speak volumes without saying a word. Use your body to paint a
               picture, tell a story.
