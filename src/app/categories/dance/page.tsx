@@ -25,8 +25,9 @@ export default function Art() {
 
         <div className="flex flex-col gap-y-4">
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Free Dance</h2>
             <p>
@@ -36,10 +37,11 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Breath connected movement</h2>
             <p>
@@ -49,8 +51,9 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Improv/Break the routine</h2>
             <p>
@@ -59,10 +62,11 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl mb-16 p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl mb-16 p-5 text-center hover:cursor-pointer"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Expressive dance</h2>
             <p>

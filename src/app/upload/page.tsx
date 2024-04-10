@@ -10,6 +10,7 @@ import { tree } from 'next/dist/build/templates/app-page';
 import CustomLoader from '@/components/loader';
 import Image from 'next/image';
 import { Media } from '@/components/media';
+import { Check, Cross, X } from 'lucide-react';
 
 const UploadPostPage: React.FC = () => {
   const [isUploading, setUploading] = useState<boolean>(false);
@@ -58,10 +59,28 @@ const UploadPostPage: React.FC = () => {
     setContent(e.target.value);
   };
 
-  const [emotions, setEmotions] = useState<string>('Happy');
+  const [emotions, setEmotions] = useState<string[]>([]);
+
+  const capitalize = (word: string) => {
+    if (word.length > 0) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    } else {
+      return '';
+    }
+  }
+
   const handleEmotionChange = (e: any) => {
-    setEmotions(e.target.value);
+    if (emotions.indexOf(capitalize(e.target.value)) === -1) {
+      setEmotions(prevEmotions => [...prevEmotions, capitalize(e.target.value)]);
+    }
   };
+
+  const removeEmotion = (index: number) => {
+    const temp = [...emotions];
+    temp.splice(index, 1);
+    setEmotions(temp);
+  }
+
   const handleAnswer1 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswer1(e.target.value);
   };
@@ -87,11 +106,11 @@ const UploadPostPage: React.FC = () => {
     );
     const cloudinaryData = await cloudinaryResponse.json();
     const mediaUrl = cloudinaryData.url;
-    let answers = [answer1, answer2, answer3];
+    let answers = [answer1];
     const postData = {
       url: mediaUrl ?? '',
       description: content,
-      emotions: [emotions],
+      emotions: emotions,
       answers: answers,
       display: isPublic
     };
@@ -172,10 +191,10 @@ const UploadPostPage: React.FC = () => {
               How are you feeling?
             </label>
             <div className="relative w-full lg:max-w-sm">
-              {emotions !== 'Others' ? (
+              {emotions.slice(-1)[0] !== 'Others...' ? (
                 <select
                   id="emotion"
-                  value={emotions}
+                  value={"Select Emotion..."}
                   onChange={handleEmotionChange}
                   className="w-full p-2.5 text-primary bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
                 >
@@ -184,18 +203,30 @@ const UploadPostPage: React.FC = () => {
                   <option>Anxious</option>
                   <option>Grateful</option>
                   <option>Joyous</option>
-                  <option>Others</option>
+                  <option>Others...</option>
                 </select>
               ) : (
+                <div className='flex gap-2 text-white'>
                 <input
                   id="emotion"
                   type="text"
                   value={customEmotion}
                   onChange={(e) => setCustomEmotion(e.target.value)}
+                  onKeyDown={(e) => {if (e.key == "Enter" && emotions.indexOf(capitalize(customEmotion)) == -1) {setEmotions(prevEmotions => {const temp = [...prevEmotions]; temp.pop(); temp.push(capitalize(customEmotion)); return temp}); setCustomEmotion("");}}}
                   placeholder="Enter your emotion"
                   className="w-full p-2.5 text-primary bg-white border rounded-md shadow-sm outline-none focus:border-indigo-600"
                 />
+                <button className='px-2 py-1 bg-primary rounded-xl' onClick={() => {if (emotions.indexOf(capitalize(customEmotion)) == -1) {setEmotions(prevEmotions => {const temp = [...prevEmotions]; temp.pop(); temp.push(capitalize(customEmotion)); return temp}); setCustomEmotion("");}}}><Check/></button>
+                </div>
               )}
+              <div className='flex gap-1 items-center justify-start mt-1'>
+                {emotions.map((item, index) => (
+                  <div key={index} className='px-1 py-2 text-white bg-primary flex items-center justify-center gap-1 rounded-full'>
+                    <label>{item}</label>
+                    <X className='hover:cursor-pointer' onClick={() => {removeEmotion(index)}}/>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <div className="mb-4">
@@ -203,7 +234,7 @@ const UploadPostPage: React.FC = () => {
               htmlFor="content"
               className="block text-xl text-primary font-bold mb-2"
             >
-              Are there any benefits to feeling this way?
+              Are there any benefits to feeling this way? What do you think is the root cause of this feeling?
             </label>
             <input
               id="content"
@@ -215,39 +246,9 @@ const UploadPostPage: React.FC = () => {
           <div className="mb-4">
             <label
               htmlFor="content"
-              className="block text-xl text-primary font-bold mb-2"
-            >
-              What do you think is the root cause of this feeling?
-            </label>
-            <input
-              id="content"
-              value={answer2}
-              onChange={handleAnswer2}
-              className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
-            ></input>
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="content"
-              className="block text-xl text-primary font-bold mb-2"
-            >
-              Is this root cause a fact?
-            </label>
-            <input
-              id="content"
-              value={answer3}
-              onChange={handleAnswer3}
-              className="w-full border rounded-md py-2 px-3 text-xl text-primary focus:outline-none focus:border-blue-500"
-            ></input>
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="content"
               className="block text-xl text-textcolor font-bold mb-2"
             >
-              If not, what is the real fact? This is the caption for the post
-              you will be uploading
+              Is this root cause a fact? If not, what is the real fact? Fill in the real fact below as the caption for your post
             </label>
             <input
               id="content"

@@ -25,8 +25,9 @@ export default function Art() {
 
         <div className="flex flex-col gap-y-4">
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Mandala</h2>
             <p>
@@ -36,10 +37,11 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Collage Making</h2>
             <p>
@@ -49,8 +51,9 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Neurographic Art</h2>
             <p>
@@ -60,10 +63,11 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 mb-16 text-center mb-16"
+            className="bg-cover bg-no-repeat rounded-xl p-5 mb-16 text-center hover:cursor-pointer"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Doodling</h2>
             <p>

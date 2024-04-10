@@ -25,8 +25,9 @@ export default function Art() {
 
         <div className="flex max-w-screen flex-col gap-y-4">
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Acrostic Poems</h2>
             <p>
@@ -36,10 +37,11 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat rounded-xl p-5 text-center"
+            className="bg-cover bg-no-repeat rounded-xl p-5 text-center hover:cursor-pointer"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Letter to Yourself</h2>
             <p>
@@ -49,8 +51,9 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat p-5 rounded-xl text-center"
+            className="bg-cover bg-no-repeat p-5 rounded-xl text-center hover:cursor-pointer"
             style={{ backgroundImage: 'url("/images/rectangle-design.png")' }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Inner Dialogue Writing</h2>
             <p>
@@ -60,10 +63,11 @@ export default function Art() {
           </div>
 
           <div
-            className="bg-cover bg-no-repeat p-5 mb-16 rounded-xl text-center"
+            className="bg-cover bg-no-repeat p-5 mb-16 rounded-xl text-center hover:cursor-pointer"
             style={{
               backgroundImage: 'url("/images/rectangle-design-alt.png")',
             }}
+            onClick={() => {router.push("/upload")}}
           >
             <h2 className="font-semibold text-lg">Flash Fiction</h2>
             <p>
