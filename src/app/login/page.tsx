@@ -22,7 +22,7 @@ export default function LoginPage() {
             router.push('/home');
           })
           .catch(function (error) {
-            if (error.response.status == 302) {
+            if (error.response && error.response.status == 302) {
               router.push('/username');
             }
           });
