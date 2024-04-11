@@ -9,7 +9,7 @@ import { handleLogout } from '@/utils/logout';
 import { AppBar } from '@mui/material';
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
-import { Delete, Trash2 } from 'lucide-react';
+import { Delete, Share2, Trash2 } from 'lucide-react';
 import { headers } from 'next/headers';
 import CustomModal from '@/components/modal';
 
@@ -115,6 +115,28 @@ export default function Discover() {
     fetchData();
   }, []);
 
+  const handleShare = async (post: Post) => {
+    const response = await fetch(post.multimedia);
+    const blob = await response.blob();
+    const files = [new File([blob], "Image.jpeg", {type: blob.type})]
+    const shareData = {
+      text: "Check out my Post",
+      title: "Hues",
+      files
+    }
+    if (navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData)
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error(err.name, err.message);
+        }
+      }
+    } else {
+      console.log('Sharing not supported', shareData);
+    }
+  }
+
   return (
     <div className="bg-white text-slate-800 container mx-auto h-screen">
       <div className="mx-4 py-8">
@@ -150,15 +172,18 @@ export default function Discover() {
                   <p className="font-bold text-gray-600">
                     {getTimeAgo(post.timestamp)}
                   </p>
-                  <button
-                    className="text-red-500"
-                    onClick={() => {
-                      setDeletePostId(post.id);
-                      setDeleteModal(true);
-                    }}
-                  >
-                    <Trash2></Trash2>
-                  </button>
+                  <div className='flex gap-2'>
+                    <button onClick={() => {handleShare(post)}}><Share2/></button>
+                    <button
+                      className="text-red-500"
+                      onClick={() => {
+                        setDeletePostId(post.id);
+                        setDeleteModal(true);
+                      }}
+                    >
+                      <Trash2></Trash2>
+                    </button>
+                  </div>
                 </div>
                 <p className="">{post.description}</p>
               </div>
