@@ -121,9 +121,9 @@ export default function Discover() {
     const blob = await response.blob();
     const files = [new File([blob], "Image.jpeg", {type: blob.type})]
     const shareData = {
-      text: "Check out my Post",
-      title: "Hues",
-      files
+      files: files,
+      title: "Check out my Post",
+      text: "Check out my Post"
     }
     if (navigator.canShare(shareData)) {
       try {
