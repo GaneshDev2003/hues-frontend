@@ -116,7 +116,8 @@ export default function Discover() {
   }, []);
 
   const handleShare = async (post: Post) => {
-    const response = await fetch(post.multimedia);
+    const imageUrl = "https" + post.multimedia.split("http")[1];
+    const response = await fetch(imageUrl);
     const blob = await response.blob();
     const files = [new File([blob], "Image.jpeg", {type: blob.type})]
     const shareData = {
