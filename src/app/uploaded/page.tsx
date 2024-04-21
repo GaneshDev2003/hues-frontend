@@ -123,10 +123,12 @@ export default function Discover() {
     const shareData = {
       files: files,
       title: "Check out my Post",
-      text: "Check out my Post"
+      // text: "Check out my Post",
+      // url: "Check out my new Post",
     }
     if (navigator.canShare(shareData)) {
       try {
+        console.log(shareData)
         await navigator.share(shareData)
       } catch (err: any) {
         if (err.name !== 'AbortError') {
