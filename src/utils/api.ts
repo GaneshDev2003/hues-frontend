@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-// export const BASE_URL: string = 'https://huesofchennai.azurewebsites.net/api';
+//export const BASE_URL: string = 'https://huesofchennai.azurewebsites.net/api';
 export const BASE_URL: string = 'http://localhost:8000/api';
 
 let isRefreshing = false;

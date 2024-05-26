@@ -8,6 +8,7 @@ import '@/utils/api';
 import axios from 'axios';
 import MyAppBar from '@/components/appbar';
 import { useRouter } from 'next/navigation';
+import { Heart } from 'lucide-react';
 
 type Post = {
   answers: string[];
@@ -52,13 +53,36 @@ export default function Discover() {
   const observerRef = useRef(null);
   const accessToken = Cookies.get('huesAccessToken');
   const refreshToken = Cookies.get('huesRefreshToken');
-
   const handleLogout = async () => {
     Cookies.remove('huesAccessToken');
     Cookies.remove('huesRefreshToken');
     window.location.href = '/login';
   };
-
+  // make a list of likes that is a copy of the likes field in postData
+  const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
+  const likePost = async (postId: number) => {
+    console.log(accessToken)
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/v1/like?postId=${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+  
+      if (response.status === 200) {
+        console.log('Post liked successfully');
+        setLikedPosts(prev => ({ ...prev, [postId]: true })); // Set the postId in likedPosts to true when the post is liked
+      } else {
+        console.log('Failed to like post');
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
+  
   useEffect(() => {
     if (!accessToken || !refreshToken) {
       window.location.href = '/login';
@@ -229,7 +253,9 @@ export default function Discover() {
                 {getTimeAgo(post.timestamp)}
               </p>
               <p className="">{post.description}</p>
-              
+              <button onClick={() => likePost(post.id)} style={{ color: likedPosts[post.id] ? 'red' : 'black' }}>
+      <Heart />
+    </button>
             </div>
           ))}
           <div
