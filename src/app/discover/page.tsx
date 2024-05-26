@@ -17,9 +17,10 @@ type Post = {
   id: number;
   multimedia: string;
   timestamp: string;
-  total_likes: string;
+  emoji: string;
   username: String;
   display: boolean;
+  reactions: {[key: string]: number};
 };
 
 const getTimeAgo = (timestamp: string): string => {
@@ -228,6 +229,7 @@ export default function Discover() {
                 {getTimeAgo(post.timestamp)}
               </p>
               <p className="">{post.description}</p>
+              
             </div>
           ))}
           <div
