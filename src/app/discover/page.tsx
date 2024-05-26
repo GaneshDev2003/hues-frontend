@@ -59,12 +59,11 @@ export default function Discover() {
     window.location.href = '/login';
   };
   // make a list of likes that is a copy of the likes field in postData
-  const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({});
-  const likePost = async (postId: number) => {
-    console.log(accessToken)
+  const likePost = async (index: number) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/v1/like?postId=${postId}`,
+        `${BASE_URL}/v1/like`,
+        {post: postData[index].id, emoji: "1F604"},
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -72,9 +71,14 @@ export default function Discover() {
         },
       );
   
-      if (response.status === 200) {
+      if (response.status === 204) {
         console.log('Post liked successfully');
-        setLikedPosts(prev => ({ ...prev, [postId]: true })); // Set the postId in likedPosts to true when the post is liked
+        setPostData(prevData => {
+          const newData = [...prevData];
+          if (newData[index].emoji === "") newData[index].emoji = "1F604";
+          else newData[index].emoji = "";
+          return newData;
+        })
       } else {
         console.log('Failed to like post');
       }
@@ -253,9 +257,9 @@ export default function Discover() {
                 {getTimeAgo(post.timestamp)}
               </p>
               <p className="">{post.description}</p>
-              <button onClick={() => likePost(post.id)} style={{ color: likedPosts[post.id] ? 'red' : 'black' }}>
-      <Heart />
-    </button>
+              <button onClick={() => likePost(index)}>
+                <Heart fill={`${(post.emoji !== "")?"red":"transparent"}`} color={`${(post.emoji !== "")?"red":"black"}`}/>
+              </button>
             </div>
           ))}
           <div
